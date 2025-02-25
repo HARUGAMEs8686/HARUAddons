@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minecraft Addon Hub</title>
+    <link rel="icon" type="image/png" href="./icon.png">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+
+        /* ナビゲーションバー */
+        nav {
+            background-color: #2c3e50;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .logo-container .logo {
+            color: #fff;
+            font-size: 1.6rem;
+            font-weight: bold;
+        }
+
+        .logo-container .logo-icon {
+            width: 32px;
+            height: 32px;
+            object-fit: contain;
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            gap: 2rem;
+        }
+
+        nav ul li a {
+            color: #fff;
+            text-decoration: none;
+            font-size: 1.1rem;
+            transition: color 0.3s;
+        }
+
+        nav ul li a:hover {
+            color: #1abc9c;
+        }
+
+        .menu-toggle {
+            display: none;
+            font-size: 1.5rem;
+            color: #fff;
+            background: none;
+            border: none;
+            cursor: pointer;
+        }
+
+        /* ヒーローセクション */
+        .hero {
+            height: 600px;
+            background: linear-gradient(to bottom, rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.6)), 
+                        url('./thumbnail.png') center/cover no-repeat;
+            background-size: 1920px 600px;
+            background-position: center top;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            color: #fff;
+            padding-top: 6rem; /* ナビ分の余白を追加 */
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .hero p {
+            font-size: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .hero .cta {
+            padding: 1rem 2rem;
+            background-color: #1abc9c;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 1.2rem;
+            transition: background-color 0.3s;
+            cursor: pointer;
+        }
+
+        .hero .cta:hover {
+            background-color: #16a085;
+        }
+
+        /* アドオンリストセクション */
+        .addon-list {
+            padding: 4rem 2rem;
+            background-color: #f5f6f5;
+            text-align: center;
+        }
+
+        .addon-list h2 {
+            font-size: 2.5rem;
+            margin-bottom: 2rem;
+            color: #2c3e50;
+        }
+
+        .addon-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .addon-item {
+            background-color: #fff;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s;
+        }
+
+        .addon-item:hover {
+            transform: translateY(-5px);
+        }
+
+        .addon-item img {
+            width: 100%;
+            height: auto;
+            aspect-ratio: 16 / 9;
+            object-fit: contain;
+            background-color: #e0e0e0;
+        }
+
+        .addon-item a {
+            display: block;
+            padding: 1rem;
+            text-decoration: none;
+            color: #2c3e50;
+            font-size: 1.2rem;
+            font-weight: bold;
+            transition: color 0.3s;
+        }
+
+        .addon-item a:hover {
+            color: #1abc9c;
+        }
+
+        /* フッター */
+        footer {
+            background-color: #2c3e50;
+            color: #fff;
+            text-align: center;
+            padding: 2rem;
+            font-size: 1rem;
+        }
+
+        /* スマホ対応 */
+        @media (max-width: 768px) {
+            nav {
+                padding: 0.8rem 1rem;
+                flex-wrap: wrap;
+            }
+
+            .logo-container .logo {
+                font-size: 1.4rem;
+            }
+
+            .logo-container .logo-icon {
+                width: 24px;
+                height: 24px;
+            }
+
+            .menu-toggle {
+                display: block;
+            }
+
+            nav ul {
+                display: none;
+                flex-direction: column;
+                width: 100%;
+                padding: 1rem 0;
+                background-color: #2c3e50;
+                position: absolute;
+                top: 100%;
+                left: 0;
+            }
+
+            nav ul.active {
+                display: flex;
+            }
+
+            nav ul li {
+                margin: 0.5rem 0;
+                text-align: center;
+            }
+
+            nav ul li a {
+                font-size: 1rem;
+                padding: 0.5rem;
+                display: block;
+            }
+
+            .hero {
+                height: 50vh;
+                background-size: cover;
+                padding-top: 5rem; /* スマホでのナビ分の余白 */
+            }
+
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .hero p {
+                font-size: 1rem;
+                margin-bottom: 1.5rem;
+            }
+
+            .hero .cta {
+                padding: 0.8rem 1.5rem;
+                font-size: 1rem;
+            }
+
+            .addon-list {
+                padding: 3rem 1rem;
+            }
+
+            .addon-list h2 {
+                font-size: 1.8rem;
+            }
+
+            .addon-grid {
+                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+                gap: 1rem;
+            }
+
+            .addon-item a {
+                font-size: 1rem;
+            }
+
+            footer {
+                padding: 1.5rem;
+                font-size: 0.9rem;
+            }
+        }
+
+        /* さらに小さい画面 */
+        @media (max-width: 480px) {
+            .logo-container .logo {
+                font-size: 1.2rem;
+            }
+
+            .logo-container .logo-icon {
+                width: 20px;
+                height: 20px;
+            }
+
+            .menu-toggle {
+                font-size: 1.2rem;
+            }
+
+            .hero {
+                padding-top: 4.5rem;
+            }
+
+            .hero h1 {
+                font-size: 1.8rem;
+            }
+
+            .hero p {
+                font-size: 0.9rem;
+                margin-bottom: 1rem;
+            }
+
+            .hero .cta {
+                padding: 0.6rem 1.2rem;
+                font-size: 0.9rem;
+            }
+
+            .addon-list {
+                padding: 2.5rem 0.5rem;
+            }
+
+            .addon-list h2 {
+                font-size: 1.5rem;
+            }
+
+            .addon-grid {
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+                gap: 0.8rem;
+            }
+
+            .addon-item a {
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- ナビゲーションバー -->
+    <nav>
+        <div class="logo-container">
+            <img src="./icon.png" alt="Logo Icon" class="logo-icon">
+            <div class="logo">HaruAddons</div>
+        </div>
+        <button class="menu-toggle">☰</button>
+        <ul>
+            <li><a href="./home.html">ホーム</a></li>
+            <li><a href="./developer_info.html">開発者情報</a></li>
+            <li><a href="./links.html">リンク</a></li>
+        </ul>
+    </nav>
+
+    <!-- ヒーローセクション -->
+    <section class="hero">
+        <div>
+            <h1>HARUAddons</h1>
+            <p>高品質なアドオンで新しい体験を</p>
+            <a href="#addons" class="cta" onclick="scrollToAddons(event)">アドオン一覧</a>
+        </div>
+    </section>
+
+    <!-- アドオンリストセクション -->
+    <section class="addon-list" id="addons">
+        <h2>アドオン一覧</h2>
+        <div class="addon-grid">
+            <div class="addon-item">
+                <img src="./addon1.png" alt="アドオン1">
+                <a href="./addon1.html">HARUPhone1</a>
+            </div>
+            <div class="addon-item">
+                <img src="./addon2.png" alt="アドオン2">
+                <a href="./addon2.html">HARUSecurity</a>
+            </div>
+            <div class="addon-item">
+                <img src="./addon3.png" alt="アドオン3">
+                <a href="./addon3.html">HARUShortCut</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- フッター -->
+    <footer>
+        <p>© 2025 HaruAddons. All Rights Reserved.</p>
+    </footer>
+
+    <!-- JavaScript -->
+    <script>
+        function scrollToAddons(event) {
+            event.preventDefault();
+            const addonsSection = document.getElementById('addons');
+            addonsSection.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        document.querySelector('.menu-toggle').addEventListener('click', function() {
+            document.querySelector('nav ul').classList.toggle('active');
+        });
+    </script>
+</body>
+</html>
