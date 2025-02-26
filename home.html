@@ -83,7 +83,7 @@
             align-items: center;
             text-align: center;
             color: #fff;
-            padding-top: 6rem; /* ナビ分の余白を追加 */
+            padding-top: 6rem;
         }
 
         .hero h1 {
@@ -144,6 +144,17 @@
             transform: translateY(-5px);
         }
 
+        .addon-item a {
+            display: block; /* リンクをカード全体に */
+            text-decoration: none;
+            color: #2c3e50;
+            transition: color 0.3s;
+        }
+
+        .addon-item a:hover {
+            color: #1abc9c;
+        }
+
         .addon-item img {
             width: 100%;
             height: auto;
@@ -152,18 +163,11 @@
             background-color: #e0e0e0;
         }
 
-        .addon-item a {
-            display: block;
+        .addon-item .title {
             padding: 1rem;
-            text-decoration: none;
-            color: #2c3e50;
             font-size: 1.2rem;
             font-weight: bold;
-            transition: color 0.3s;
-        }
-
-        .addon-item a:hover {
-            color: #1abc9c;
+            text-align: center;
         }
 
         /* フッター */
@@ -224,7 +228,7 @@
             .hero {
                 height: 50vh;
                 background-size: cover;
-                padding-top: 5rem; /* スマホでのナビ分の余白 */
+                padding-top: 5rem;
             }
 
             .hero h1 {
@@ -254,8 +258,9 @@
                 gap: 1rem;
             }
 
-            .addon-item a {
+            .addon-item .title {
                 font-size: 1rem;
+                padding: 0.8rem;
             }
 
             footer {
@@ -264,7 +269,6 @@
             }
         }
 
-        /* さらに小さい画面 */
         @media (max-width: 480px) {
             .logo-container .logo {
                 font-size: 1.2rem;
@@ -310,8 +314,9 @@
                 gap: 0.8rem;
             }
 
-            .addon-item a {
+            .addon-item .title {
                 font-size: 0.9rem;
+                padding: 0.6rem;
             }
         }
     </style>
@@ -345,16 +350,22 @@
         <h2>アドオン一覧</h2>
         <div class="addon-grid">
             <div class="addon-item">
-                <img src="./addon1.png" alt="アドオン1">
-                <a href="./addon1.html">HARUPhone1</a>
+                <a href="haruphone1.html">
+                    <img src="./addon1.png" alt="アドオン1">
+                    <div class="title">HARUPhone1</div>
+                </a>
             </div>
             <div class="addon-item">
-                <img src="./addon2.png" alt="アドオン2">
-                <a href="./addon2.html">HARUSecurity</a>
+                <a href="./addon2.html">
+                    <img src="./addon2.png" alt="アドオン2">
+                    <div class="title">HARUSecurity</div>
+                </a>
             </div>
             <div class="addon-item">
-                <img src="./addon3.png" alt="アドオン3">
-                <a href="./addon3.html">HARUShortCut</a>
+                <a href="./addon3.html">
+                    <img src="./addon3.png" alt="アドオン3">
+                    <div class="title">HARUShortCut</div>
+                </a>
             </div>
         </div>
     </section>
