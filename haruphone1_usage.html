@@ -105,7 +105,7 @@
             padding: 2rem;
             border-radius: 10px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            position: relative; /* ボタンの位置調整用 */
+            position: relative;
         }
 
         .addon-content h2 {
@@ -132,7 +132,7 @@
             gap: 1rem;
             position: absolute;
             top: 1rem;
-            right: 1rem; /* 右上に移動 */
+            right: 1rem;
         }
 
         .addon-content .btn {
@@ -143,7 +143,7 @@
             border-radius: 5px;
             font-size: 1rem;
             transition: background-color 0.3s, transform 0.3s, box-shadow 0.3s;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* 軽い影で立体感 */
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
 
         .addon-content .btn:hover {
@@ -190,7 +190,6 @@
             font-size: 1rem;
         }
 
-        /* スマホ対応 */
         @media (max-width: 768px) {
             nav {
                 padding: 0.8rem 1rem;
@@ -269,7 +268,7 @@
             }
 
             .addon-content .buttons {
-                position: static; /* スマホでは通常の流れに */
+                position: static;
                 flex-direction: row;
                 justify-content: center;
                 margin: 1.5rem 0;
@@ -370,11 +369,14 @@
     
     <section class="addon-header">
         <img src="./addon1.png" alt="HARUPhone1 Image">
-        <h1>HARUPhone1 使い方</h1>
+        <h1>HARUPhone1</h1>
     </section>
 
     <section class="addon-page">
         <div class="addon-content">
+            <div class="buttons">
+                <a href="./haruphone1.html" class="btn">戻る</a>
+            </div>
             <h2>基本操作</h2>
             <p>HARUPhone1は、Minecraft統合版のスマートフォン風UIを提供するアドオンです。</p>
             <ul>
@@ -384,9 +386,21 @@
             </ul>
             
             <h2>主な機能</h2>
-            <h3>・HARU PAY</h3>
+            <h3>1. HARUPAY（通貨）機能</h3>
             <p>ゲーム内の仮想通貨を管理し、送金やチャージが可能です。</p>
-            
+            <ul>
+                <li><strong>✅ 残高の確認</strong><br>スマホを開き「HARUPAY」→「残高確認」</li>
+                <li><strong>✅ プレイヤーへの送金</strong><br>「HARUPAY」→「送る」→ 送信先プレイヤーを選択 → 金額を設定し送信</li>
+            </ul>
+
+            <h3>2. Quick（ネットショップ）機能</h3>
+            <p>ゲーム内でアイテムの出品や購入が可能です。</p>
+            <ul>
+                <li><strong>💰 出品する場合</strong><br>「Quick」→「出品」→ 商品名と金額を入力し送信</li>
+                <li><strong>🛒 購入する場合</strong><br>「Quick」→「購入」→ 商品を選択 → 確認後、購入</li>
+            </ul>
+            <p><strong>⚠️ 注意</strong><br>現在テスト段階のため、ワールドを終了すると出品データが消えます。</p>
+
             <h3>・メール</h3>
             <p>他のプレイヤーとメッセージをやり取りできます。</p>
             
@@ -406,12 +420,11 @@
             <h3>🔹 HARUPhone1の入手方法</h3>
             <p>HARUPhone1は、<strong>初回参加時に自動付与</strong> されます（システムが有効な場合）。</p>
             <p>再度取得する場合は、以下のコマンドを使用してください。</p>
-            <pre><code>/give &lt;ゲーマータグ&gt; additem:haruphone1</code></pre>
+            <pre><code>/give <ゲーマータグ> additem:haruphone1</code></pre>
             
             <h3>🔹 レジの入手方法</h3>
             <p>以下のコマンドでレジを入手できます。</p>
-            <pre><code>/give &lt;ゲーマータグ&gt; addblock:register</code></pre>
-            
+            <pre><code>/give <ゲーマータグ> addblock:register</code></pre>
         </div>
     </section>
     
