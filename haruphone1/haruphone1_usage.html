@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HaruAddons - CommandShortCut</title>
+    <title>HaruAddons - HARUPhone1 使い方</title>
     <link rel="icon" type="image/png" href="../icon.png">
     <style>
         * {
@@ -105,7 +105,7 @@
             padding: 2rem;
             border-radius: 10px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            position: relative; /* ボタンの位置調整用 */
+            position: relative;
         }
 
         .addon-content h2 {
@@ -132,7 +132,7 @@
             gap: 1rem;
             position: absolute;
             top: 1rem;
-            right: 1rem; /* 右上に移動 */
+            right: 1rem;
         }
 
         .addon-content .btn {
@@ -143,7 +143,7 @@
             border-radius: 5px;
             font-size: 1rem;
             transition: background-color 0.3s, transform 0.3s, box-shadow 0.3s;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* 軽い影で立体感 */
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
 
         .addon-content .btn:hover {
@@ -190,7 +190,6 @@
             font-size: 1rem;
         }
 
-        /* スマホ対応 */
         @media (max-width: 768px) {
             nav {
                 padding: 0.8rem 1rem;
@@ -269,7 +268,7 @@
             }
 
             .addon-content .buttons {
-                position: static; /* スマホでは通常の流れに */
+                position: static;
                 flex-direction: row;
                 justify-content: center;
                 margin: 1.5rem 0;
@@ -355,7 +354,6 @@
     </style>
 </head>
 <body>
-    <!-- ナビゲーションバー -->
     <nav>
         <div class="logo-container">
             <img src="../icon.png" alt="Logo Icon" class="logo-icon">
@@ -368,44 +366,72 @@
             <li><a href="../links.html">リンク</a></li>
         </ul>
     </nav>
-
-    <!-- アドオンヘッダー（画像とタイトルエリア） -->
+    
     <section class="addon-header">
-        <img src="../CommandShortCut.jpg" alt="HARUPhone1 Image">
-        <h1>CommandShortCut</h1>
+        <img src="../haruphone1.png" alt="HARUPhone1 Image">
+        <h1>HARUPhone1</h1>
     </section>
 
-    <!-- アドオン紹介セクション -->
     <section class="addon-page">
         <div class="addon-content">
-            <h2>概要</h2>
-            <p>CommandShortCutは、Minecraft統合版向けのアドオンです。カスタマイズしたコマンドをUIで簡単に実行できます</p>
             <div class="buttons">
-                <a href="./commandshortcut_introduction.html" class="btn">導入方法</a>
-                <a href="./commandshortcut_usage.html" class="btn">使い方</a>
+                <a href="./haruphone1.html" class="btn">戻る</a>
             </div>
-            <h3>主な機能</h3>
+            <h2>基本操作</h2>
+            <p>HARUPhone1は、Minecraft統合版のスマートフォン風UIを提供するアドオンです。</p>
             <ul>
-                <li><strong>📱 コマンドを登録</strong><br>直感的なタップ操作でコマンドを登録できます</li>
-                <li><strong>🎮 ワンタップコマンド実行</strong><br>登録されたコマンドをワンタップで実行できます</li>
+                <li>インベントリから <strong>HARUPhone1</strong> を選択し、使用する。</li>
+                <li>メニューからアプリを選んでタップ操作で利用できる。</li>
+                <li>「Quick」や「メール」など、様々な機能が搭載されている。</li>
             </ul>
             
-            <h2>アップデート情報</h2>
-            <p>定期的にアップデートを行い、機能を追加・改善しています。</p>
-            <p style="font-weight: bold; color: #1abc9c;">🆕 最新版：2025/3/1 配布開始</p>
-            <h3>過去の主な更新</h3>
-            <ul class="update-list">
-                <li>2025/3/1 - 配布開始加</li>
+            <h2>主な機能</h2>
+            <h3>1. HARUPAY（通貨）機能</h3>
+            <p>ゲーム内の仮想通貨を管理し、送金やチャージが可能です。</p>
+            <ul>
+                <li><strong>✅ 残高の確認</strong><br>スマホを開き「HARUPAY」→「残高確認」</li>
+                <li><strong>✅ プレイヤーへの送金</strong><br>「HARUPAY」→「送る」→ 送信先プレイヤーを選択 → 金額を設定し送信</li>
             </ul>
+
+            <h3>2. Quick（ネットショップ）機能</h3>
+            <p>ゲーム内でアイテムの出品や購入が可能です。</p>
+            <ul>
+                <li><strong>💰 出品する場合</strong><br>「Quick」→「出品」→ 商品名と金額を入力し送信</li>
+                <li><strong>🛒 購入する場合</strong><br>「Quick」→「購入」→ 商品を選択 → 確認後、購入</li>
+            </ul>
+            <p><strong>⚠️ 注意</strong><br>現在テスト段階のため、ワールドを終了すると出品データが消えます。</p>
+
+            <h3>・メール</h3>
+            <p>他のプレイヤーとメッセージをやり取りできます。</p>
+            
+            <h3>・換金</h3>
+            <p>ゲーム内アイテムを仮想通貨に変換できます。</p>
+            
+            <h3>・ショップ</h3>
+            <p>アイテムの購入や出品ができます。</p>
+
+            <h2>よくある質問</h2>
+
+            <h3>🔹 全プレイヤーのHARUPAY残高をランキング順に表示したい</h3>
+            <p>HARUPAYの残高は <strong>scoreboard</strong> で管理されています。</p>
+            <p>以下のコマンドを使用すると、ランキング順に画面右側へ表示できます。</p>
+            <pre><code>/scoreboard objectives setdisplay sidebar money</code></pre>
+            
+            <h3>🔹 HARUPhone1の入手方法</h3>
+            <p>HARUPhone1は、<strong>初回参加時に自動付与</strong> されます（システムが有効な場合）。</p>
+            <p>再度取得する場合は、以下のコマンドを使用してください。</p>
+            <pre><code>/give <ゲーマータグ> additem:haruphone1</code></pre>
+            
+            <h3>🔹 レジの入手方法</h3>
+            <p>以下のコマンドでレジを入手できます。</p>
+            <pre><code>/give <ゲーマータグ> addblock:register</code></pre>
         </div>
     </section>
-
-    <!-- フッター -->
+    
     <footer>
         <p>© 2025 HaruAddons. All Rights Reserved.</p>
     </footer>
-
-    <!-- JavaScript -->
+    
     <script>
         document.querySelector('.menu-toggle').addEventListener('click', function() {
             document.querySelector('nav ul').classList.toggle('active');

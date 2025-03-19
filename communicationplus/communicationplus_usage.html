@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HaruAddons - CommandShortCut</title>
+    <title>HaruAddons - CommunicationPlus 使い方</title>
     <link rel="icon" type="image/png" href="../icon.png">
     <style>
         * {
@@ -105,7 +105,7 @@
             padding: 2rem;
             border-radius: 10px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            position: relative; /* ボタンの位置調整用 */
+            position: relative;
         }
 
         .addon-content h2 {
@@ -132,7 +132,7 @@
             gap: 1rem;
             position: absolute;
             top: 1rem;
-            right: 1rem; /* 右上に移動 */
+            right: 1rem;
         }
 
         .addon-content .btn {
@@ -143,7 +143,7 @@
             border-radius: 5px;
             font-size: 1rem;
             transition: background-color 0.3s, transform 0.3s, box-shadow 0.3s;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* 軽い影で立体感 */
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
 
         .addon-content .btn:hover {
@@ -190,7 +190,6 @@
             font-size: 1rem;
         }
 
-        /* スマホ対応 */
         @media (max-width: 768px) {
             nav {
                 padding: 0.8rem 1rem;
@@ -269,7 +268,7 @@
             }
 
             .addon-content .buttons {
-                position: static; /* スマホでは通常の流れに */
+                position: static;
                 flex-direction: row;
                 justify-content: center;
                 margin: 1.5rem 0;
@@ -355,7 +354,6 @@
     </style>
 </head>
 <body>
-    <!-- ナビゲーションバー -->
     <nav>
         <div class="logo-container">
             <img src="../icon.png" alt="Logo Icon" class="logo-icon">
@@ -368,44 +366,51 @@
             <li><a href="../links.html">リンク</a></li>
         </ul>
     </nav>
-
-    <!-- アドオンヘッダー（画像とタイトルエリア） -->
+    
     <section class="addon-header">
-        <img src="../CommandShortCut.jpg" alt="HARUPhone1 Image">
-        <h1>CommandShortCut</h1>
+        <img src="../CommunicationPlus.png" alt="HARUPhone1 Image">
+        <h1>CommunicationPlus</h1>
     </section>
 
-    <!-- アドオン紹介セクション -->
     <section class="addon-page">
         <div class="addon-content">
-            <h2>概要</h2>
-            <p>CommandShortCutは、Minecraft統合版向けのアドオンです。カスタマイズしたコマンドをUIで簡単に実行できます</p>
             <div class="buttons">
-                <a href="./commandshortcut_introduction.html" class="btn">導入方法</a>
-                <a href="./commandshortcut_usage.html" class="btn">使い方</a>
+                <a href="./communicationplus.html" class="btn">戻る</a>
             </div>
-            <h3>主な機能</h3>
+            <h2>基本操作</h2>
+            <p>CommunicationPlusは、Minecraft統合版のコミュニケーションアドオンです。</p>
             <ul>
-                <li><strong>📱 コマンドを登録</strong><br>直感的なタップ操作でコマンドを登録できます</li>
-                <li><strong>🎮 ワンタップコマンド実行</strong><br>登録されたコマンドをワンタップで実行できます</li>
+                <li>インベントリから <strong>ChatPlus</strong> を選択し、使用する。</li>
+                <li>メニューから機能を選んでタップ操作で利用できる。</li>
             </ul>
             
-            <h2>アップデート情報</h2>
-            <p>定期的にアップデートを行い、機能を追加・改善しています。</p>
-            <p style="font-weight: bold; color: #1abc9c;">🆕 最新版：2025/3/1 配布開始</p>
-            <h3>過去の主な更新</h3>
-            <ul class="update-list">
-                <li>2025/3/1 - 配布開始加</li>
+            <h2>主な機能</h2>
+            <h3>1. メール機能</h3>
+            <p>メール機能は個別のメッセージが可能です</p>
+            <ul>
+                <li><strong>1.送信先のプレイヤーを選択</strong></li>
+                <li><strong>2.メッセージを入力（任意で座標共有も可能）</strong></li>
             </ul>
+
+            <h3>2. オープンチャット機能（全体チャット）</h3>
+            <p>全プレイヤーにメッセージ送信が出来ます</p>
+            <ul>
+                <li><strong>1.メッセージを入力（任意で座標共有も可能）</strong></li>
+            </ul>
+
+            <h2>よくある質問</h2>
+
+            <h3>🔹 ChatPlusのアイテム取得方法</h3>
+            <p>ChatPlusは <strong>コマンド</strong> で入手することが出来ます。</p>
+            <p>以下のコマンドを使用すると、指定したプレイヤーにChatPlusを付与できます。</p>
+            <pre><code>/give [ゲーマータグ] additem:chatplus</code></pre>
         </div>
     </section>
-
-    <!-- フッター -->
+    
     <footer>
         <p>© 2025 HaruAddons. All Rights Reserved.</p>
     </footer>
-
-    <!-- JavaScript -->
+    
     <script>
         document.querySelector('.menu-toggle').addEventListener('click', function() {
             document.querySelector('nav ul').classList.toggle('active');
