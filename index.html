@@ -4,199 +4,349 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="google-site-verification" content="9S9blQzCvgIm-0eArJeotUn8jH2cKG7KbiQ1VUnwNDQ" />
-    <title>Minecraftアドオン - HARU Addons</title>
+    <title>Minecraftアドオン-HARU Addons</title>
     <meta name="description" content="Minecraft統合版のアドオン開発チーム『HARU Addons』の公式サイト。経済システムや荒らし対策など、多彩で高品質なアドオンを公開中！">
     <meta property="og:image" content="https://haruaddons.pages.dev/ogp-image.png">
     <meta property="og:url" content="https://haruaddons.pages.dev/">
     <meta name="twitter:card" content="summary_large_image">
     <link rel="icon" type="image/png" href="./icon.png">
     <style>
+        :root {
+            --shadow-teal: #26a69a;
+            --midnight-blue: #1e3a8a;
+            --glow-purple: #8e44ad;
+            --dark-bg: #0f172a;
+            --text-light: #e2e8f0;
+            --glass-bg: rgba(39, 45, 92, 0.5);
+        }
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Arial', sans-serif;
+            font-family: 'Noto Sans JP', sans-serif;
         }
 
-        /* ナビゲーションバー */
+        body {
+            background: var(--dark-bg) url('./thumbnail.png') center/cover no-repeat fixed;
+            color: var(--text-light);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
         nav {
-            background-color: #000000;
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90%;
+            max-width: 1000px;
+            background: rgba(30, 58, 138, 0.2);
+            backdrop-filter: blur(12px);
+            border-radius: 20px;
             padding: 1rem 2rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            position: fixed;
-            width: 100%;
-            top: 0;
             z-index: 1000;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            transition: padding 0.3s, background 0.3s;
+        }
+
+        nav.scrolled {
+            padding: 0.5rem 1.5rem;
+            background: rgba(30, 58, 138, 0.5);
         }
 
         .logo-container {
             display: flex;
             align-items: center;
-            gap: 0.5rem;
+            gap: 0.8rem;
+        }
+
+        .logo-container img {
+            width: 36px;
+            height: 36px;
+            transition: transform 0.3s;
+        }
+
+        .logo-container:hover img {
+            transform: scale(1.05);
         }
 
         .logo-container .logo {
-            color: #fff;
-            font-size: 1.6rem;
-            font-weight: bold;
-        }
-
-        .logo-container .logo-icon {
-            width: 32px;
-            height: 32px;
-            object-fit: contain;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--shadow-teal);
+            letter-spacing: 0.5px;
+            background: linear-gradient(90deg, var(--shadow-teal), var(--glow-purple));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
         nav ul {
-            list-style: none;
             display: flex;
+            list-style: none;
             gap: 2rem;
         }
 
         nav ul li a {
-            color: #fff;
+            color: var(--text-light);
             text-decoration: none;
             font-size: 1.1rem;
-            transition: color 0.3s;
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            border-radius: 10px;
+            transition: all 0.3s;
         }
 
         nav ul li a:hover {
-            color: #1abc9c;
+            background: rgba(38, 166, 154, 0.3);
+            color: var(--shadow-teal);
+            box-shadow: 0 0 5px var(--shadow-teal);
         }
 
         .menu-toggle {
             display: none;
             font-size: 1.5rem;
-            color: #fff;
             background: none;
             border: none;
+            color: var(--shadow-teal);
             cursor: pointer;
+            transition: transform 0.3s;
         }
 
-        /* ヒーローセクション */
-        .hero {
-            height: 600px;
-            background: linear-gradient(to bottom, rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.6)), 
-                        url('./thumbnail.png') center/cover no-repeat;
-            background-size: 1920px 600px;
-            background-position: center top;
+        .menu-toggle span {
+            display: block;
+            width: 25px;
+            height: 3px;
+            background: var(--shadow-teal);
+            margin: 5px 0;
+            transition: all 0.3s;
+        }
+
+        .menu-toggle:hover {
+            transform: scale(1.05);
+        }
+
+        .mobile-nav {
+            display: none;
+            position: fixed;
+            top: 70px;
+            right: 20px;
+            width: 250px;
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(15px);
+            border-radius: 15px;
+            padding: 1rem;
+            z-index: 999;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.4);
+            transform: translateY(-20px);
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+
+        .mobile-nav.active {
+            display: block;
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .mobile-nav ul {
+            list-style: none;
             display: flex;
-            justify-content: center;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .mobile-nav ul li a {
+            color: var(--text-light);
+            text-decoration: none;
+            font-size: 1.2rem;
+            font-weight: 500;
+            padding: 0.8rem 1rem;
+            border-radius: 10px;
+            display: block;
+            transition: all 0.3s;
+        }
+
+        .mobile-nav ul li a:hover {
+            background: var(--shadow-teal);
+            color: var(--dark-bg);
+        }
+
+        .hero {
+            min-height: 85vh; /* 高さを縮小してアドオンリストが見えるように */
+            display: flex;
             align-items: center;
+            justify-content: center;
             text-align: center;
-            color: #fff;
-            padding-top: 6rem;
+            padding: 6rem 2rem 2rem;
+            position: relative;
+            background: linear-gradient(to bottom, rgba(15, 23, 42, 0.7), rgba(15, 23, 42, 0.9));
+        }
+
+        .hero-content {
+            max-width: 800px;
+            position: relative;
+            z-index: 1;
         }
 
         .hero h1 {
-            font-size: 3.5rem;
-            margin-bottom: 1rem;
+            font-size: 4.5rem;
+            font-weight: 700;
+            color: var(--shadow-teal);
+            margin-bottom: 1.5rem;
+            text-shadow: 0 0 10px var(--shadow-teal);
+            animation: fadeInGlow 1.5s ease-out;
         }
 
         .hero p {
-            font-size: 1.5rem;
-            margin-bottom: 2rem;
+            font-size: 1.6rem;
+            font-weight: 500;
+            color: var(--text-light);
+            opacity: 0.9;
+            margin-bottom: 2.5rem;
         }
 
         .hero .cta {
-            padding: 1rem 2rem;
-            background-color: #1abc9c;
-            color: #fff;
+            padding: 1.2rem 3rem;
+            background: var(--glow-purple);
+            color: var(--text-light);
             text-decoration: none;
-            border-radius: 5px;
-            font-size: 1.2rem;
-            transition: background-color 0.3s;
-            cursor: pointer;
+            font-size: 1.3rem;
+            font-weight: 600;
+            border-radius: 50px;
+            border: 2px solid var(--text-light);
+            transition: all 0.3s;
+            box-shadow: 0 0 10px var(--glow-purple);
         }
 
         .hero .cta:hover {
-            background-color: #16a085;
+            background: var(--shadow-teal);
+            color: var(--dark-bg);
+            transform: translateY(-3px);
+            box-shadow: 0 0 15px var(--shadow-teal);
         }
 
-        /* アドオンリストセクション */
         .addon-list {
-            padding: 4rem 2rem;
-            background-color: #f5f6f5;
-            text-align: center;
+            padding: 6rem 2rem;
+            background: rgba(15, 23, 42, 0.85);
+            border-radius: 40px 40px 0 0;
+            margin-top: -40px;
+            position: relative;
+            z-index: 0;
         }
 
         .addon-list h2 {
-            font-size: 2.5rem;
-            margin-bottom: 2rem;
-            color: #2c3e50;
+            font-size: 3rem;
+            font-weight: 700;
+            text-align: center;
+            color: var(--shadow-teal);
+            margin-bottom: 4rem;
+            text-shadow: 0 0 8px var(--shadow-teal);
         }
 
         .addon-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-            max-width: 1200px;
+            grid-template-columns: repeat(auto-fit, minmax(480px, 1fr));
+            gap: 3rem;
+            max-width: 1440px;
             margin: 0 auto;
         }
 
         .addon-item {
-            background-color: #fff;
-            border-radius: 10px;
+            position: relative;
+            border-radius: 25px;
             overflow: hidden;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s;
+            transition: all 0.3s;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.4);
+            display: flex;
+            flex-direction: column;
+            background: none;
+            align-items: center;
         }
 
         .addon-item:hover {
-            transform: translateY(-5px);
+            transform: scale(1.02);
+            box-shadow: 0 8px 25px rgba(38, 166, 154, 0.4);
         }
 
         .addon-item a {
-            display: block; /* リンクをカード全体に */
             text-decoration: none;
-            color: #2c3e50;
-            transition: color 0.3s;
-        }
-
-        .addon-item a:hover {
-            color: #1abc9c;
+            color: var(--text-light);
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            align-items: center;
         }
 
         .addon-item img {
-            width: 100%;
-            height: auto;
+            width: 90%;
             aspect-ratio: 16 / 9;
             object-fit: contain;
-            background-color: #e0e0e0;
+            border-radius: 20px;
+            transition: all 0.3s;
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        .addon-item:hover img {
+            filter: brightness(1.05);
+        }
+
+        .addon-item .title-container {
+            padding: 0.6rem 1rem;
+            text-align: center;
+            background: var(--glass-bg);
+            border-radius: 10px;
+            margin: 8px auto 12px;
+            backdrop-filter: blur(5px);
+            width: 70%;
+            max-width: 350px;
+            transition: all 0.3s;
+        }
+
+        .addon-item:hover .title-container {
+            background: rgba(142, 68, 173, 0.5);
+            box-shadow: 0 0 5px rgba(142, 68, 173, 0.3);
         }
 
         .addon-item .title {
-            padding: 1rem;
-            font-size: 1.2rem;
-            font-weight: bold;
-            text-align: center;
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--text-light);
+            text-shadow: 0 0 3px rgba(255, 255, 255, 0.2);
         }
 
-        /* フッター */
         footer {
-            background-color: #000000;
-            color: #fff;
+            background-color: rgb(10, 17, 32);
+            color: var(--text-light);
             text-align: center;
             padding: 2rem;
-            font-size: 1rem;
         }
 
-        /* スマホ対応 */
+        footer p {
+            font-size: 1rem;
+            opacity: 0.8;
+        }
+
+        @keyframes fadeInGlow {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 1024px) {
+            .addon-grid {
+                grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            }
+        }
+
         @media (max-width: 768px) {
             nav {
-                padding: 0.8rem 1rem;
-                flex-wrap: wrap;
-            }
-
-            .logo-container .logo {
-                font-size: 1.4rem;
-            }
-
-            .logo-container .logo-icon {
-                width: 24px;
-                height: 24px;
+                top: 10px;
+                width: 95%;
+                padding: 0.8rem 1.5rem;
             }
 
             .menu-toggle {
@@ -205,134 +355,94 @@
 
             nav ul {
                 display: none;
-                flex-direction: column;
-                width: 100%;
-                padding: 1rem 0;
-                background-color: #131313;
-                position: absolute;
-                top: 100%;
-                left: 0;
-            }
-
-            nav ul.active {
-                display: flex;
-            }
-
-            nav ul li {
-                margin: 0.5rem 0;
-                text-align: center;
-            }
-
-            nav ul li a {
-                font-size: 1rem;
-                padding: 0.5rem;
-                display: block;
-            }
-
-            .hero {
-                height: 50vh;
-                background-size: cover;
-                padding-top: 5rem;
             }
 
             .hero h1 {
-                font-size: 2rem;
+                font-size: 3rem;
             }
 
             .hero p {
-                font-size: 1rem;
-                margin-bottom: 1.5rem;
+                font-size: 1.3rem;
+                padding: 0 1rem;
             }
 
             .hero .cta {
-                padding: 0.8rem 1.5rem;
-                font-size: 1rem;
+                padding: 1rem 2rem;
+                font-size: 1.1rem;
             }
 
             .addon-list {
-                padding: 3rem 1rem;
+                padding: 4rem 1rem;
             }
 
             .addon-list h2 {
-                font-size: 1.8rem;
-            }
-
-            .addon-grid {
-                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-                gap: 1rem;
-            }
-
-            .addon-item .title {
-                font-size: 1rem;
-                padding: 0.8rem;
-            }
-
-            footer {
-                padding: 1.5rem;
-                font-size: 0.9rem;
+                font-size: 2.2rem;
             }
         }
 
         @media (max-width: 480px) {
             .logo-container .logo {
-                font-size: 1.2rem;
-            }
-
-            .logo-container .logo-icon {
-                width: 20px;
-                height: 20px;
-            }
-
-            .menu-toggle {
-                font-size: 1.2rem;
-            }
-
-            .hero {
-                padding-top: 4.5rem;
-            }
-
-            .hero h1 {
-                font-size: 1.8rem;
-            }
-
-            .hero p {
-                font-size: 0.9rem;
-                margin-bottom: 1rem;
-            }
-
-            .hero .cta {
-                padding: 0.6rem 1.2rem;
-                font-size: 0.9rem;
-            }
-
-            .addon-list {
-                padding: 2.5rem 0.5rem;
-            }
-
-            .addon-list h2 {
                 font-size: 1.5rem;
             }
 
+            .logo-container img {
+                width: 30px;
+                height: 30px;
+            }
+
+            .mobile-nav {
+                width: 200px;
+                right: 10px;
+            }
+
+            .mobile-nav ul li a {
+                font-size: 1rem;
+            }
+
+            .hero h1 {
+                font-size: 2.2rem;
+            }
+
+            .hero p {
+                font-size: 1rem;
+            }
+
             .addon-grid {
-                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-                gap: 0.8rem;
+                grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             }
 
             .addon-item .title {
-                font-size: 0.9rem;
-                padding: 0.6rem;
+                font-size: 1.1rem;
+            }
+
+            .addon-item .title-container {
+                width: 85%;
+                max-width: 300px;
+            }
+        }
+
+        @media (hover: none) {
+            .logo-container:hover img,
+            nav ul li a:hover,
+            .addon-item:hover,
+            .hero .cta:hover {
+                transform: none;
+                box-shadow: inherit;
             }
         }
     </style>
 </head>
 <body>
-    <!-- ナビゲーションバー -->
     <nav>
         <div class="logo-container">
-            <img src="./icon.png" alt="Logo Icon" class="logo-icon">
-            <div class="logo">HaruAddons</div>
+            <img src="./icon.png" alt="HARU Addons Icon" loading="lazy">
+            <div class="logo">HARUAddons</div>
         </div>
-        <button class="menu-toggle">☰</button>
+        <button class="menu-toggle" aria-label="メニューを開く" aria-expanded="false">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
         <ul>
             <li><a href="./index.html">ホーム</a></li>
             <li><a href="./developer_info.html">開発者情報</a></li>
@@ -340,61 +450,83 @@
         </ul>
     </nav>
 
-    <!-- ヒーローセクション -->
+    <div class="mobile-nav">
+        <ul>
+            <li><a href="./index.html">ホーム</a></li>
+            <li><a href="./developer_info.html">開発者情報</a></li>
+            <li><a href="./links.html">リンク</a></li>
+        </ul>
+    </div>
+
     <section class="hero">
-        <div>
-            <h1>HARUAddons</h1>
+        <div class="hero-content">
+            <h1>HARU Addons</h1>
             <p>高品質なアドオンで新しい体験を</p>
             <a href="#addons" class="cta" onclick="scrollToAddons(event)">アドオン一覧</a>
         </div>
     </section>
 
-    <!-- アドオンリストセクション -->
     <section class="addon-list" id="addons">
-        <h2>アドオン一覧</h2>
         <div class="addon-grid">
             <div class="addon-item">
                 <a href="./haruphone1/haruphone1.html">
-                    <img src="./haruphone1.png" alt="アドオン1">
-                    <div class="title">HARUPhone1</div>
+                    <img src="./haruphone1.png" alt="HARUPhone1" loading="lazy">
+                    <div class="title-container">
+                        <div class="title">HARUPhone1</div>
+                    </div>
                 </a>
             </div>
             <div class="addon-item">
                 <a href="./securitycraft/securitycraft_introduction.html">
-                    <img src="./SecurityCraft.png" alt="アドオン2">
-                    <div class="title">SecurityCraft</div>
+                    <img src="./SecurityCraft.png" alt="SecurityCraft" loading="lazy">
+                    <div class="title-container">
+                        <div class="title">SecurityCraft</div>
+                    </div>
                 </a>
             </div>
             <div class="addon-item">
                 <a href="./commandshortcut/commandshortcut.html">
-                    <img src="./CommandShortCut.jpg" alt="アドオン3">
-                    <div class="title">CommandShortCut</div>
+                    <img src="./CommandShortCut.jpg" alt="CommandShortCut" loading="lazy">
+                    <div class="title-container">
+                        <div class="title">CommandShortCut</div>
+                    </div>
                 </a>
             </div>
             <div class="addon-item">
                 <a href="./communicationplus/communicationplus.html">
-                    <img src="./CommunicationPlus.png" alt="アドオン4">
-                    <div class="title">CommunicationPlus</div>
+                    <img src="./CommunicationPlus.png" alt="CommunicationPlus" loading="lazy">
+                    <div class="title-container">
+                        <div class="title">CommunicationPlus</div>
+                    </div>
                 </a>
             </div>
         </div>
     </section>
 
-    <!-- フッター -->
     <footer>
-        <p>© 2025 HaruAddons. All Rights Reserved.</p>
+        <p>© 2025 HARU Addons. All Rights Reserved.</p>
     </footer>
 
-    <!-- JavaScript -->
     <script>
         function scrollToAddons(event) {
             event.preventDefault();
-            const addonsSection = document.getElementById('addons');
-            addonsSection.scrollIntoView({ behavior: 'smooth' });
+            document.getElementById('addons').scrollIntoView({ behavior: 'smooth' });
         }
 
-        document.querySelector('.menu-toggle').addEventListener('click', function() {
-            document.querySelector('nav ul').classList.toggle('active');
+        const menuToggle = document.querySelector('.menu-toggle');
+        const mobileNav = document.querySelector('.mobile-nav');
+        menuToggle.addEventListener('click', () => {
+            const isExpanded = mobileNav.classList.toggle('active');
+            menuToggle.setAttribute('aria-expanded', isExpanded);
+        });
+
+        window.addEventListener('scroll', () => {
+            const nav = document.querySelector('nav');
+            if (window.scrollY > 50) {
+                nav.classList.add('scrolled');
+            } else {
+                nav.classList.remove('scrolled');
+            }
         });
     </script>
 </body>
