@@ -13,7 +13,7 @@
             font-family: 'Arial', sans-serif;
         }
 
-        /* ナビゲーションバー */
+        /* ナビゲーションは絶対に変えない！ */
         nav {
             background-color: #000000;
             padding: 1rem 2rem;
@@ -70,9 +70,9 @@
             cursor: pointer;
         }
 
-        /* リンクセクション */
+        /* リンクセクションのスタイル */
         .links {
-            padding: 6rem 2rem 4rem; /* ナビ分の余白を追加 */
+            padding: 6rem 2rem 4rem;
             background-color: #f5f6f5;
             text-align: center;
             min-height: calc(100vh - 140px);
@@ -84,32 +84,68 @@
             color: #2c3e50;
         }
 
+        .links h2 {
+            font-size: 1.8rem;
+            margin: 3rem 0 1.5rem;
+            color: #2c3e50;
+            position: relative;
+            display: inline-block;
+            padding-bottom: 0.5rem;
+        }
+
+        .links h2::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: #1abc9c;
+            border-radius: 2px;
+        }
+
         .link-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 2rem;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
             max-width: 1200px;
             margin: 0 auto;
+            justify-items: center; /* 中央揃えでバランスよく */
         }
 
         .link-item {
-            background-color: #fff;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s;
+            border-radius: 12px;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.08);
+            transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
             text-align: center;
+            padding: 1.2rem;
+            border: 2px solid #e0e0e0;
+            height: 180px; /* 少し小さめに */
+            width: 100%;
+            max-width: 320px; /* 最大幅を制限 */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #fff;
         }
 
         .link-item:hover {
-            transform: translateY(-5px);
+            transform: translateY(-8px);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+            border-color: #1abc9c;
         }
 
         .link-item a {
-            display: block;
-            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
             text-decoration: none;
             color: #2c3e50;
-            transition: color 0.3s;
+            transition: color 0.3s ease;
+            width: 100%;
+            height: 100%;
+            justify-content: center;
+            padding: 1rem;
         }
 
         .link-item a:hover {
@@ -117,18 +153,27 @@
         }
 
         .link-item .title {
-            font-size: 1.2rem;
-            font-weight: bold;
-            margin-bottom: 0.5rem;
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
         }
 
         .link-item .description {
             font-size: 1rem;
-            color: #666;
+            color: #555;
             line-height: 1.4;
         }
 
-        /* フッター */
+        /* 背景色 */
+        .link-item.social-x { background-color: #f0f7fa; }
+        .link-item.social-bluesky { background-color: #e8f0fe; }
+        .link-item.social-discord { background-color: #f2ecfe; }
+        .link-item.social-note { background-color: #e9f6f2; }
+        .link-item.stream-youtube { background-color: #ffebeb; }
+        .link-item.stream-twitch { background-color: #f2e8ff; }
+        .link-item.other-minesecure { background-color: #fff4e6; }
+        .link-item.other-crafters { background-color: #e6f3e6; }
+
         footer {
             background-color: #000000;
             color: #fff;
@@ -137,22 +182,8 @@
             font-size: 1rem;
         }
 
-        /* スマホ対応 */
+        /* レスポンシブ対応 */
         @media (max-width: 768px) {
-            nav {
-                padding: 0.8rem 1rem;
-                flex-wrap: wrap;
-            }
-
-            .logo-container .logo {
-                font-size: 1.4rem;
-            }
-
-            .logo-container .logo-icon {
-                width: 24px;
-                height: 24px;
-            }
-
             .menu-toggle {
                 display: block;
             }
@@ -184,51 +215,38 @@
             }
 
             .links {
-                padding: 5rem 1rem 3rem; /* スマホでもナビ分の余白 */
+                padding: 5rem 1rem 3rem;
             }
 
             .links h1 {
                 font-size: 1.8rem;
             }
 
-            .link-grid {
-                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-                gap: 1rem;
+            .links h2 {
+                font-size: 1.5rem;
+                margin: 2.5rem 0 1rem;
             }
 
-            .link-item a {
+            .link-grid {
+                grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+                gap: 1.2rem;
+            }
+
+            .link-item {
+                height: 160px;
                 padding: 1rem;
             }
 
             .link-item .title {
-                font-size: 1rem;
+                font-size: 1.2rem;
             }
 
             .link-item .description {
                 font-size: 0.9rem;
             }
-
-            footer {
-                padding: 1.5rem;
-                font-size: 0.9rem;
-            }
         }
 
-        /* さらに小さい画面 */
         @media (max-width: 480px) {
-            .logo-container .logo {
-                font-size: 1.2rem;
-            }
-
-            .logo-container .logo-icon {
-                width: 20px;
-                height: 20px;
-            }
-
-            .menu-toggle {
-                font-size: 1.2rem;
-            }
-
             .links {
                 padding: 4.5rem 0.5rem 2.5rem;
             }
@@ -237,17 +255,22 @@
                 font-size: 1.5rem;
             }
 
-            .link-grid {
-                grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-                gap: 0.8rem;
+            .links h2 {
+                font-size: 1.3rem;
+                margin: 2rem 0 0.8rem;
             }
 
-            .link-item a {
-                padding: 0.8rem;
+            .link-grid {
+                grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+                gap: 1rem;
+            }
+
+            .link-item {
+                height: 140px;
             }
 
             .link-item .title {
-                font-size: 0.9rem;
+                font-size: 1rem;
             }
 
             .link-item .description {
@@ -257,7 +280,6 @@
     </style>
 </head>
 <body>
-    <!-- ナビゲーションバー -->
     <nav>
         <div class="logo-container">
             <img src="./icon.png" alt="Logo Icon" class="logo-icon">
@@ -271,49 +293,77 @@
         </ul>
     </nav>
 
-    <!-- リンクセクション -->
     <section class="links" id="about">
         <h1>リンク</h1>
+
+        <!-- ソーシャルメディア -->
+        <h2>ソーシャルメディア</h2>
         <div class="link-grid">
-            <div class="link-item">
-                <a href="https://www.youtube.com/@HARUGAMEs8" target="_blank">
-                    <div class="title">YouTube</div>
-                    <div class="description">マイクラの参加型配信や他のゲームも配信中！</div>
-                </a>
-            </div>
-            <div class="link-item">
+            <div class="link-item social-x">
                 <a href="https://twitter.com/haru_addons" target="_blank">
                     <div class="title">X</div>
-                    <div class="description">リアルタイムの更新情報や開発裏話を呟いてます。</div>
+                    <div class="description">最新情報や開発の裏話をリアルタイムで発信。</div>
                 </a>
             </div>
-            <div class="link-item">
-                <a href="https://www.twitch.tv/HARUGAMEs8" target="_blank">
-                    <div class="title">Twitch</div>
-                    <div class="description">アドオンを使ったライブ配信やテストプレイを配信中！</div>
+            <div class="link-item social-bluesky">
+                <a href="https://bsky.app/profile/harugames8.bsky.social" target="_blank">
+                    <div class="title">Bluesky</div>
+                    <div class="description">更新情報や開発裏話をリアルタイムで。</div>
                 </a>
             </div>
-            <div class="link-item">
+            <div class="link-item social-discord">
+                <a href="#" target="_blank">
+                    <div class="title">Discord</div>
+                    <div class="description">HARUAddons公式Discordサーバー。</div>
+                </a>
+            </div>
+            <div class="link-item social-note">
                 <a href="https://note.com/harugames8/" target="_blank">
                     <div class="title">Note</div>
-                    <div class="description">Minecraftについてや、アドオンの紹介をしてます！</div>
+                    <div class="description">Minecraftやアドオンについて詳しく紹介。</div>
                 </a>
             </div>
-            <div class="link-item">
+        </div>
+
+        <!-- 配信プラットフォーム -->
+        <h2>配信プラットフォーム</h2>
+        <div class="link-grid">
+            <div class="link-item stream-youtube">
+                <a href="https://www.youtube.com/@HARUGAMEs8" target="_blank">
+                    <div class="title">YouTube</div>
+                    <div class="description">マイクラの参加型配信やその他ゲーム配信中！</div>
+                </a>
+            </div>
+            <div class="link-item stream-twitch">
+                <a href="https://www.twitch.tv/HARUGAMEs8" target="_blank">
+                    <div class="title">Twitch</div>
+                    <div class="description">アドオンを使ったライブ配信やテストプレイ。</div>
+                </a>
+            </div>
+        </div>
+
+        <!-- その他 -->
+        <h2>その他</h2>
+        <div class="link-grid">
+            <div class="link-item other-minesecure">
                 <a href="https://harugames8686.github.io/MineSecure/home.html" target="_blank">
                     <div class="title">MineSecure</div>
-                    <div class="description">ゲーマータグ安全チェッカー</div>
+                    <div class="description">ゲーマータグの安全性をチェック</div>
+                </a>
+            </div>
+            <div class="link-item other-crafters">
+                <a href="https://minecraft-mcworld.com/author/7b74ac0bffe9e9a5b0724a2dc9405bac786c25b7/" target="_blank">
+                    <div class="title">クラフターズコロニー</div>
+                    <div class="description">HARUAddonsの配布先サイト</div>
                 </a>
             </div>
         </div>
     </section>
 
-    <!-- フッター -->
     <footer>
         <p>© 2025 HaruAddons. All Rights Reserved.</p>
     </footer>
 
-    <!-- JavaScript -->
     <script>
         document.querySelector('.menu-toggle').addEventListener('click', function() {
             document.querySelector('nav ul').classList.toggle('active');
