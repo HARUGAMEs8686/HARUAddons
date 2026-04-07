@@ -761,6 +761,8 @@
                 const linesToDraw = [];
 
                 CONFIG.connections.forEach(conn => {
+                    if (conn.type === 'plane') return;
+
                     const fromStr = conn.from.toString();
                     const toStr = conn.to.toString();
                     const key = [fromStr, toStr].sort().join('-');
@@ -780,7 +782,6 @@
                 if (currentHighlightIndex >= 0 && globalPaths[currentHighlightIndex]) {
                     let curr = globalPaths[currentHighlightIndex].startId;
                     globalPaths[currentHighlightIndex].path.forEach(step => {
-    
                         if (step.isAuto && step.type !== 'plane') {
                             linesToDraw.push({
                                 p1: getCanvasPos(CONFIG.towns[curr].x, CONFIG.towns[curr].z),
