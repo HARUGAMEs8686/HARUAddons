@@ -693,7 +693,7 @@
                     minZ = Infinity,
                     maxZ = -Infinity;
 
-                // ▼ ここから変更：スマホ検索時のみ範囲を拡大する判定 ▼
+                // スマホ検索時のみ範囲を拡大する判定
                 const isMobile = window.innerWidth <= 768;
                 const hasRoute = currentHighlightIndex >= 0 && globalPaths[currentHighlightIndex];
 
@@ -752,7 +752,6 @@
 
                 const pairCounts = {};
                 CONFIG.connections.forEach(conn => {
-                    if (conn.type === 'plane') return;
                     const key = [conn.from.toString(), conn.to.toString()].sort().join('-');
                     pairCounts[key] = (pairCounts[key] || 0) + 1;
                 });
@@ -761,10 +760,13 @@
                 const linesToDraw = [];
 
                 CONFIG.connections.forEach(conn => {
-                    if (conn.type === 'plane') return;
-
                     const fromStr = conn.from.toString();
                     const toStr = conn.to.toString();
+                    const isHigh = isEdgeInHighlight(fromStr, toStr, conn.type);
+
+                    // ★ 飛行機で、かつ選ばれていない（ハイライトされていない）場合は描画リストから除外
+                    if (conn.type === 'plane' && !isHigh) return;
+
                     const key = [fromStr, toStr].sort().join('-');
                     const index = currentCounts[key] || 0;
                     currentCounts[key] = index + 1;
@@ -773,7 +775,7 @@
                         p1: getCanvasPos(CONFIG.towns[fromStr].x, CONFIG.towns[fromStr].z),
                         p2: getCanvasPos(CONFIG.towns[toStr].x, CONFIG.towns[toStr].z),
                         transport: CONFIG.transports[conn.type],
-                        isHigh: isEdgeInHighlight(fromStr, toStr, conn.type),
+                        isHigh: isHigh,
                         total: pairCounts[key],
                         index: index,
                     });
@@ -782,7 +784,8 @@
                 if (currentHighlightIndex >= 0 && globalPaths[currentHighlightIndex]) {
                     let curr = globalPaths[currentHighlightIndex].startId;
                     globalPaths[currentHighlightIndex].path.forEach(step => {
-                        if (step.isAuto && step.type !== 'plane') {
+                        // ★ 自動生成された直行便などは必ずハイライト対象なのでそのまま描画
+                        if (step.isAuto) {
                             linesToDraw.push({
                                 p1: getCanvasPos(CONFIG.towns[curr].x, CONFIG.towns[curr].z),
                                 p2: getCanvasPos(CONFIG.towns[step.to].x, CONFIG.towns[step.to].z),
