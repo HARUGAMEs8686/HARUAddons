@@ -1,0 +1,914 @@
+<!doctype html>
+<html lang="ja">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>マイクラ交通網 路線検索＆マップ</title>
+        <!-- 洗練された日本語フォントの読み込み -->
+        <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet" />
+        <style>
+            :root {
+                /* モダンなダークテーマのカラーパレット */
+                --bg-base: #0f172a;
+                --bg-panel: #1e293b;
+                --bg-card: #334155;
+                --bg-card-hover: #475569;
+                --text-main: #f8fafc;
+                --text-muted: #94a3b8;
+                --border-color: #334155;
+                --accent-color: #10b981;
+                --accent-hover: #059669;
+                --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+                --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.3), 0 2px 4px -2px rgb(0 0 0 / 0.3);
+                --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.4), 0 4px 6px -4px rgb(0 0 0 / 0.4);
+            }
+
+            * {
+                box-sizing: border-box;
+            }
+
+            body {
+                font-family: 'Noto Sans JP', sans-serif;
+                background-color: var(--bg-base);
+                color: var(--text-main);
+                margin: 0;
+                padding: 24px;
+                display: flex;
+                flex-direction: column;
+                height: 100vh;
+            }
+
+            /* スクロールバーの美化 */
+            ::-webkit-scrollbar {
+                width: 8px;
+                height: 8px;
+            }
+            ::-webkit-scrollbar-track {
+                background: var(--bg-base);
+            }
+            ::-webkit-scrollbar-thumb {
+                background: var(--border-color);
+                border-radius: 4px;
+            }
+            ::-webkit-scrollbar-thumb:hover {
+                background: var(--text-muted);
+            }
+
+            h1 {
+                margin: 0 0 24px 0;
+                font-size: 26px;
+                font-weight: 700;
+                color: var(--text-main);
+                letter-spacing: 1px;
+                text-align: center;
+                text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+            }
+
+            .container {
+                display: flex;
+                gap: 24px;
+                flex: 1;
+                min-height: 0;
+            }
+
+            .left-panel,
+            .right-panel {
+                background-color: var(--bg-panel);
+                border-radius: 16px;
+                padding: 24px;
+                box-shadow: var(--shadow-lg);
+                display: flex;
+                flex-direction: column;
+                border: 1px solid rgba(255, 255, 255, 0.05);
+            }
+
+            .left-panel {
+                flex: 1.2;
+                min-width: 360px;
+                max-width: 450px;
+                overflow-y: auto;
+            }
+
+            .right-panel {
+                flex: 2;
+                position: relative;
+            }
+
+            .form-group {
+                margin-bottom: 20px;
+            }
+
+            label {
+                display: block;
+                margin-bottom: 8px;
+                font-size: 13px;
+                font-weight: 700;
+                color: var(--text-muted);
+                letter-spacing: 0.5px;
+            }
+
+            select {
+                width: 100%;
+                padding: 12px 16px;
+                border-radius: 8px;
+                border: 1px solid var(--border-color);
+                background-color: var(--bg-base);
+                color: var(--text-main);
+                font-size: 15px;
+                font-family: inherit;
+                appearance: none;
+                cursor: pointer;
+                transition: border-color 0.2s;
+                /* カスタム矢印 */
+                background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+                background-repeat: no-repeat;
+                background-position: right 16px center;
+            }
+
+            select:focus {
+                outline: none;
+                border-color: var(--accent-color);
+            }
+
+            button {
+                width: 100%;
+                padding: 14px;
+                border-radius: 8px;
+                border: none;
+                background: linear-gradient(135deg, var(--accent-color), #059669);
+                color: white;
+                font-size: 16px;
+                font-weight: 700;
+                font-family: inherit;
+                cursor: pointer;
+                box-shadow: var(--shadow-md);
+                transition: all 0.2s ease;
+                letter-spacing: 1px;
+            }
+
+            button:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 6px 12px rgba(16, 185, 129, 0.3);
+            }
+
+            button:active {
+                transform: translateY(0);
+            }
+
+            #result-box {
+                margin-top: 24px;
+                display: flex;
+                flex-direction: column;
+                gap: 16px;
+            }
+
+            .route-card {
+                background-color: var(--bg-card);
+                border-radius: 12px;
+                padding: 20px;
+                cursor: pointer;
+                border: 1px solid transparent;
+                transition: all 0.3s ease;
+                position: relative;
+                overflow: hidden;
+            }
+
+            .route-card::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 4px;
+                height: 100%;
+                background-color: var(--border-color);
+                transition: background-color 0.3s;
+            }
+
+            .route-card:hover {
+                background-color: var(--bg-card-hover);
+                transform: translateY(-3px);
+                box-shadow: var(--shadow-md);
+            }
+
+            .route-card h3 {
+                margin: 0 0 12px 0;
+                font-size: 16px;
+                color: #fcd34d; /* 優しいゴールド */
+                display: flex;
+                align-items: center;
+                gap: 8px;
+            }
+
+            .route-summary {
+                font-size: 13px;
+                color: var(--text-muted);
+                font-weight: normal;
+                margin-top: 4px;
+            }
+
+            .route-step-container {
+                margin-top: 12px;
+                font-size: 14px;
+            }
+
+            .route-node {
+                font-weight: 700;
+                position: relative;
+                padding-left: 20px;
+            }
+            .route-node::before {
+                content: '';
+                position: absolute;
+                left: 2px;
+                top: 6px;
+                width: 8px;
+                height: 8px;
+                background-color: var(--text-main);
+                border-radius: 50%;
+                z-index: 2;
+            }
+
+            .route-edge {
+                padding: 10px 0 10px 20px;
+                margin-left: 5px;
+                border-left: 2px solid var(--border-color);
+                color: var(--text-muted);
+                font-size: 13px;
+            }
+
+            .route-goal {
+                font-weight: 700;
+                color: var(--accent-color);
+                position: relative;
+                padding-left: 20px;
+            }
+            .route-goal::before {
+                content: '';
+                position: absolute;
+                left: 0;
+                top: 4px;
+                width: 12px;
+                height: 12px;
+                background-color: var(--accent-color);
+                border-radius: 50%;
+                z-index: 2;
+                box-shadow: 0 0 8px var(--accent-color);
+            }
+
+            #map-container {
+                flex: 1;
+                background-color: #0b1120;
+                border-radius: 12px;
+                position: relative;
+                /* スマホ向けにスワイプ(スクロール)を許可する */
+                overflow: auto;
+                -webkit-overflow-scrolling: touch;
+                box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.5);
+            }
+
+            canvas {
+                display: block;
+                width: 100%;
+                height: 100%;
+            }
+
+            /* 凡例がマップのスクロールに巻き込まれないように修正 */
+            .legend {
+                position: absolute;
+                bottom: 32px;
+                left: 32px;
+                background: rgba(15, 23, 42, 0.85);
+                backdrop-filter: blur(4px);
+                padding: 12px 16px;
+                border-radius: 8px;
+                font-size: 12px;
+                pointer-events: none;
+                border: 1px solid rgba(255, 255, 255, 0.1);
+                z-index: 10;
+            }
+            .legend-item {
+                display: flex;
+                align-items: center;
+                margin-bottom: 6px;
+                color: var(--text-main);
+            }
+            .legend-item:last-child {
+                margin-bottom: 0;
+            }
+            .legend-color {
+                width: 16px;
+                height: 4px;
+                margin-right: 10px;
+                border-radius: 2px;
+            }
+
+            /* ======================================= */
+            /* スマートフォン・タブレット向けレスポンシブ対応 */
+            /* ======================================= */
+            @media (max-width: 1024px) {
+                body {
+                    padding: 16px;
+                    height: auto;
+                    min-height: 100vh;
+                }
+                .container {
+                    flex-direction: column;
+                    gap: 16px;
+                }
+                .left-panel,
+                .right-panel {
+                    padding: 20px;
+                    max-width: none;
+                    min-width: 0;
+                }
+                .left-panel {
+                    flex: none;
+                    overflow-y: visible;
+                }
+                .right-panel {
+                    flex: none;
+                    height: 60vh;
+                    min-height: 400px;
+                }
+            }
+
+            /* スマホ特化のレイアウト調整 */
+            @media (max-width: 768px) {
+                body {
+                    padding: 12px;
+                }
+                h1 {
+                    font-size: 22px;
+                    margin-bottom: 16px;
+                }
+
+                .left-panel,
+                .right-panel {
+                    padding: 16px;
+                }
+
+                .form-group {
+                    margin-bottom: 16px;
+                }
+                select {
+                    padding: 10px 14px;
+                    font-size: 14px;
+                }
+
+                /* 大きすぎた経路ボタンをシュッとしたアプリ風の形に調整 */
+                button {
+                    width: auto;
+                    min-width: 240px;
+                    margin: 8px auto 0;
+                    display: block;
+                    padding: 12px 32px;
+                    font-size: 15px;
+                    border-radius: 999px; /* カプセル(ピル)型 */
+                }
+
+                #result-box {
+                    margin-top: 20px;
+                }
+
+                .right-panel {
+                    height: 55vh;
+                    min-height: 380px;
+                    padding: 12px;
+                }
+
+                /* 凡例の微調整 */
+                .legend {
+                    bottom: 20px;
+                    left: 20px;
+                    padding: 10px 14px;
+                    font-size: 11px;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <h1>マイクラ交通網 路線検索</h1>
+
+        <div class="container">
+            <!-- 左側：検索パネル -->
+            <div class="left-panel">
+                <div class="form-group">
+                    <label for="start-town">出発地</label>
+                    <select id="start-town"></select>
+                </div>
+                <div class="form-group">
+                    <label for="end-town">目的地</label>
+                    <select id="end-town"></select>
+                </div>
+                <button onclick="searchRoute()">経路を検索する</button>
+
+                <div id="result-box">
+                    <div style="padding: 20px; background: var(--bg-card); border-radius: 8px; color: var(--text-muted); text-align: center; font-size: 14px">出発地と目的地を選んで検索してください。</div>
+                </div>
+            </div>
+
+            <!-- 右側：マップパネル -->
+            <!-- 凡例(legend)がスクロールで消えないよう、コンテナの外に配置 -->
+            <div class="right-panel">
+                <div id="map-container">
+                    <canvas id="world-map"></canvas>
+                </div>
+                <div class="legend" id="map-legend"></div>
+            </div>
+        </div>
+
+        <script>
+            // ==========================================
+            // --- カスタマイズ設定エリア ---
+            // ==========================================
+
+            const CONFIG = {
+                autoWalk: true,
+                autoPlane: true,
+
+                transports: {
+                    walk: { name: '徒歩', color: '#8B4513', speed: 100, dashed: true },
+                    rail: { name: '鉄道', color: '#94a3b8', speed: 480 },
+                    nether: { name: 'ネザー新幹線', color: '#ef4444', speed: 3840 },
+                    ice: { name: '氷新幹線', color: '#3b82f6', speed: 2400 },
+                    plane: { name: '飛行機', color: '#06b6d4', speed: 2400, baseFare: 50, farePerBlock: 0.01 },
+                },
+
+                towns: {
+                    1: { name: '初期コア', x: 0, z: 0, hasAirport: true },
+                    2: { name: 'HyouTown', x: 6779, z: -186, hasAirport: true },
+                    3: { name: 'カジノ', x: 678, z: 137, hasAirport: true },
+                    4: { name: 'HARUCity', x: -8000, z: -120, hasAirport: true },
+                    5: { name: '海City', x: -1000, z: -320, hasAirport: false },
+                    6: { name: 'KAMITOWN', x: -1830, z: 630, hasAirport: true },
+                    7: { name: 'エンド村', x: -2940, z: 3809, hasAirport: true },
+                },
+
+                connections: [
+                    { from: 1, to: 2, type: 'plane', fare: 90, time: 2 },
+                    { from: 1, to: 3, type: 'plane', fare: 40 },
+                    { from: 1, to: 4, type: 'plane', fare: 150 },
+                    { from: 3, to: 2, type: 'plane', fare: 90 },
+                    { from: 1, to: 6, type: 'plane', fare: 70 },
+                    { from: 1, to: 2, type: 'nether', fare: 100 },
+                    { from: 1, to: 3, type: 'rail', fare: 0 },
+                ],
+            };
+
+            // ==========================================
+            // --- システム・ロジック ---
+            // ==========================================
+
+            let globalPaths = [];
+            let currentHighlightIndex = -1;
+            let isInitialMapScrolled = false; // 初回マップスクロール用
+
+            window.onload = () => {
+                initSelectBoxes();
+                initLegend();
+                drawMap();
+                window.addEventListener('resize', drawMap);
+            };
+
+            function initSelectBoxes() {
+                const startSelect = document.getElementById('start-town');
+                const endSelect = document.getElementById('end-town');
+                for (const [id, town] of Object.entries(CONFIG.towns)) {
+                    const displayName = town.hasAirport ? `${town.name}` : town.name;
+                    startSelect.add(new Option(displayName, id));
+                    endSelect.add(new Option(displayName, id));
+                }
+                if (Object.keys(CONFIG.towns).length > 1) endSelect.selectedIndex = 1;
+            }
+
+            function initLegend() {
+                const legendBox = document.getElementById('map-legend');
+                legendBox.innerHTML = '<div style="margin-bottom:8px; font-weight:bold; color:#fff;">ワールドマップ <span style="font-size:10px; font-weight:normal; color:var(--text-muted);">(スワイプで移動)</span></div>';
+                for (const key in CONFIG.transports) {
+                    const t = CONFIG.transports[key];
+                    const lineStyle = t.dashed ? `border-top: 3px dashed ${t.color}; background: transparent; height:0; margin-top:2px;` : `background-color: ${t.color}`;
+                    legendBox.innerHTML += `
+                        <div class="legend-item">
+                            <div class="legend-color" style="${lineStyle}"></div>
+                            ${t.name}
+                        </div>
+                    `;
+                }
+            }
+
+            function buildGraph() {
+                const graph = {};
+                for (const id in CONFIG.towns) graph[id.toString()] = [];
+
+                CONFIG.connections.forEach(conn => {
+                    const fromStr = conn.from.toString();
+                    const toStr = conn.to.toString();
+                    if (!CONFIG.towns[fromStr] || !CONFIG.towns[toStr]) return;
+
+                    const t1 = CONFIG.towns[fromStr];
+                    const t2 = CONFIG.towns[toStr];
+                    let time = conn.time;
+                    if (time === undefined) {
+                        const dist = Math.sqrt(Math.pow(t1.x - t2.x, 2) + Math.pow(t1.z - t2.z, 2));
+                        time = Math.max(1, Math.ceil(dist / CONFIG.transports[conn.type].speed));
+                    }
+                    graph[fromStr].push({ to: toStr, type: conn.type, fare: conn.fare, time: time, isAuto: false });
+                    graph[toStr].push({ to: fromStr, type: conn.type, fare: conn.fare, time: time, isAuto: false });
+                });
+
+                const ids = Object.keys(CONFIG.towns);
+                for (let i = 0; i < ids.length; i++) {
+                    for (let j = i + 1; j < ids.length; j++) {
+                        const t1 = ids[i];
+                        const t2 = ids[j];
+                        const town1 = CONFIG.towns[t1];
+                        const town2 = CONFIG.towns[t2];
+                        const dist = Math.sqrt(Math.pow(town1.x - town2.x, 2) + Math.pow(town1.z - town2.z, 2));
+
+                        if (CONFIG.autoPlane && town1.hasAirport && town2.hasAirport) {
+                            const hasPlane = graph[t1].some(e => e.to === t2 && e.type === 'plane');
+                            if (!hasPlane) {
+                                const time = Math.max(1, Math.ceil(dist / CONFIG.transports.plane.speed));
+                                const fare = Math.floor(CONFIG.transports.plane.baseFare + dist * CONFIG.transports.plane.farePerBlock);
+                                graph[t1].push({ to: t2, type: 'plane', fare: fare, time: time, isAuto: true });
+                                graph[t2].push({ to: t1, type: 'plane', fare: fare, time: time, isAuto: true });
+                            }
+                        }
+
+                        if (CONFIG.autoWalk) {
+                            const hasWalk = graph[t1].some(e => e.to === t2 && e.type === 'walk');
+                            if (!hasWalk) {
+                                const time = Math.max(1, Math.ceil(dist / CONFIG.transports.walk.speed));
+                                graph[t1].push({ to: t2, type: 'walk', fare: 0, time: time, isAuto: true });
+                                graph[t2].push({ to: t1, type: 'walk', fare: 0, time: time, isAuto: true });
+                            }
+                        }
+                    }
+                }
+                return graph;
+            }
+
+            function searchRoute() {
+                const startId = document.getElementById('start-town').value;
+                const endId = document.getElementById('end-town').value;
+                const resultBox = document.getElementById('result-box');
+
+                if (startId === endId) {
+                    resultBox.innerHTML = `<div style="padding:15px; background:rgba(239,68,68,0.2); color:#fca5a5; border-radius:8px; border:1px solid #ef4444;">出発地と目的地が同じです。</div>`;
+                    return;
+                }
+
+                const graph = buildGraph();
+                globalPaths = [];
+                let bestScore = Infinity;
+
+                function dfs(currentTown, currentPath, currentFare, currentTime, visited, lastType) {
+                    const penaltyPerTransfer = 150;
+                    const currentScore = currentFare + currentTime * 15 + currentPath.length * penaltyPerTransfer;
+
+                    if (currentTown === endId) {
+                        if (currentScore < bestScore) bestScore = currentScore;
+                        globalPaths.push({ startId: startId, path: [...currentPath], totalFare: currentFare, totalTime: currentTime, score: currentScore });
+                        return;
+                    }
+
+                    if (bestScore !== Infinity && currentScore > bestScore * 1.8) return;
+                    if (visited.size > 5) return;
+
+                    for (const edge of graph[currentTown]) {
+                        if (!visited.has(edge.to)) {
+                            if (lastType === 'walk' && edge.type === 'walk') continue;
+                            if (lastType === 'plane' && edge.type === 'plane') continue;
+
+                            visited.add(edge.to);
+                            currentPath.push(edge);
+                            dfs(edge.to, currentPath, currentFare + edge.fare, currentTime + edge.time, visited, edge.type);
+                            currentPath.pop();
+                            visited.delete(edge.to);
+                        }
+                    }
+                }
+
+                dfs(startId, [], 0, 0, new Set([startId]), null);
+
+                if (globalPaths.length === 0) {
+                    resultBox.innerHTML = `<div style="padding:15px; background:rgba(239,68,68,0.2); color:#fca5a5; border-radius:8px;">経路が見つかりませんでした。</div>`;
+                    return;
+                }
+
+                globalPaths.sort((a, b) => a.score - b.score);
+                const topScore = globalPaths[0].score;
+                globalPaths = globalPaths.filter(route => route.score <= topScore * 1.8);
+                globalPaths = globalPaths.slice(0, 3);
+
+                let html = `<div style="color:var(--text-muted); font-size:13px; margin-bottom:4px; text-align:center;">ヒント: ルートをクリックでマップにハイライト</div>`;
+
+                globalPaths.forEach((route, index) => {
+                    const transfers = route.path.length - 1;
+                    const transferText = transfers === 0 ? '直通' : `乗り換え ${transfers}回`;
+
+                    let badgeText = index === 0 ? '[おすすめ] ルート' : `ルート候補 ${index + 1}`;
+                    let activeStyle = index === 0 ? 'border-left-color: var(--accent-color);' : '';
+
+                    html += `
+                    <div class="route-card" id="card-${index}" onclick="highlightRoute(${index})" style="${activeStyle}">
+                        <h3>${badgeText}</h3>
+                        <div class="route-summary">合計: ${route.totalFare}PAY / 約${route.totalTime}分 / ${transferText}</div>
+                        <div class="route-step-container">
+                            <div class="route-node">${CONFIG.towns[startId].name}</div>
+                    `;
+
+                    route.path.forEach(step => {
+                        const transport = CONFIG.transports[step.type];
+                        const verb = step.type === 'walk' ? '歩く' : 'に乗る';
+
+                        let autoMark = '';
+                        if (step.isAuto) {
+                            if (step.type === 'walk') autoMark = '<span style="font-size:11px; color:#ef4444; opacity:0.8;">(道なき道)</span>';
+                            if (step.type === 'plane') autoMark = '<span style="font-size:11px; color:#06b6d4; opacity:0.8;">(直行便)</span>';
+                        }
+
+                        html += `
+                            <div class="route-edge">
+                                <span style="color: ${transport.color}; font-weight:700;">${transport.name}</span> ${verb} ${autoMark}<br>
+                                <span>${step.fare}PAY / 約${step.time}分</span>
+                            </div>
+                            <div class="route-node">${CONFIG.towns[step.to].name}</div>
+                        `;
+                    });
+
+                    html += `</div></div>`;
+                });
+
+                resultBox.innerHTML = html;
+                highlightRoute(0);
+            }
+
+            function highlightRoute(index) {
+                currentHighlightIndex = index;
+
+                document.querySelectorAll('.route-card').forEach((el, i) => {
+                    if (i === index) {
+                        el.style.borderLeftColor = 'var(--accent-color)';
+                        el.style.backgroundColor = 'var(--bg-card-hover)';
+                        el.style.transform = 'translateY(-2px)';
+                    } else {
+                        el.style.borderLeftColor = 'transparent';
+                        el.style.backgroundColor = 'var(--bg-card)';
+                        el.style.transform = 'translateY(0)';
+                    }
+                });
+                drawMap();
+            }
+
+            function isEdgeInHighlight(from, to, type) {
+                if (currentHighlightIndex < 0 || !globalPaths[currentHighlightIndex]) return false;
+                const route = globalPaths[currentHighlightIndex];
+                let curr = route.startId;
+                for (const step of route.path) {
+                    if (((curr == from && step.to == to) || (curr == to && step.to == from)) && step.type === type) {
+                        return true;
+                    }
+                    curr = step.to;
+                }
+                return false;
+            }
+
+            function drawMap() {
+                const canvas = document.getElementById('world-map');
+                const ctx = canvas.getContext('2d');
+                const container = document.getElementById('map-container');
+
+                // スマホなど画面が小さい時はマップが縮小されすぎないよう最小サイズを確保（スクロールで閲覧）
+                const minCanvasWidth = 750;
+                const minCanvasHeight = 800;
+
+                canvas.width = Math.max(container.clientWidth, minCanvasWidth);
+                canvas.height = Math.max(container.clientHeight, minCanvasHeight);
+
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                let minX = Infinity,
+                    maxX = -Infinity,
+                    minZ = Infinity,
+                    maxZ = -Infinity;
+
+                // ▼ ここから変更：スマホ検索時のみ範囲を拡大する判定 ▼
+                const isMobile = window.innerWidth <= 768;
+                const hasRoute = currentHighlightIndex >= 0 && globalPaths[currentHighlightIndex];
+
+                if (isMobile && hasRoute) {
+                    // 検索中：ルートに含まれる駅の範囲だけにフォーカス
+                    const route = globalPaths[currentHighlightIndex];
+                    const nodes = new Set([route.startId]);
+                    route.path.forEach(step => nodes.add(step.to));
+
+                    nodes.forEach(id => {
+                        const t = CONFIG.towns[id];
+                        if (t.x < minX) minX = t.x;
+                        if (t.x > maxX) maxX = t.x;
+                        if (t.z < minZ) minZ = t.z;
+                        if (t.z > maxZ) maxZ = t.z;
+                    });
+
+                    // 拡大されすぎ（近すぎる駅同士）を防ぐための最低表示範囲
+                    const minRange = 4000;
+                    const cx = (minX + maxX) / 2;
+                    const cz = (minZ + maxZ) / 2;
+                    if (maxX - minX < minRange) {
+                        minX = cx - minRange / 2;
+                        maxX = cx + minRange / 2;
+                    }
+                    if (maxZ - minZ < minRange) {
+                        minZ = cz - minRange / 2;
+                        maxZ = cz + minRange / 2;
+                    }
+                } else {
+                    // 未検索、またはPCの場合：全体を表示
+                    for (const id in CONFIG.towns) {
+                        const t = CONFIG.towns[id];
+                        if (t.x < minX) minX = t.x;
+                        if (t.x > maxX) maxX = t.x;
+                        if (t.z < minZ) minZ = t.z;
+                        if (t.z > maxZ) maxZ = t.z;
+                    }
+                }
+
+                // 画面幅によって余白(パディング)を調整
+                const padding = isMobile ? 40 : 80;
+                const rangeX = maxX - minX || 1;
+                const rangeZ = maxZ - minZ || 1;
+
+                const scaleX = (canvas.width - padding * 2) / rangeX;
+                const scaleZ = (canvas.height - padding * 2) / rangeZ;
+                const scale = Math.min(scaleX, scaleZ);
+
+                const offsetX = canvas.width / 2 - ((maxX + minX) / 2) * scale;
+                const offsetZ = canvas.height / 2 - ((maxZ + minZ) / 2) * scale;
+
+                function getCanvasPos(mcX, mcZ) {
+                    return { x: mcX * scale + offsetX, y: mcZ * scale + offsetZ };
+                }
+
+                const pairCounts = {};
+                CONFIG.connections.forEach(conn => {
+                    const key = [conn.from.toString(), conn.to.toString()].sort().join('-');
+                    pairCounts[key] = (pairCounts[key] || 0) + 1;
+                });
+                const currentCounts = {};
+
+                const linesToDraw = [];
+
+                CONFIG.connections.forEach(conn => {
+                    const fromStr = conn.from.toString();
+                    const toStr = conn.to.toString();
+                    const key = [fromStr, toStr].sort().join('-');
+                    const index = currentCounts[key] || 0;
+                    currentCounts[key] = index + 1;
+
+                    linesToDraw.push({
+                        p1: getCanvasPos(CONFIG.towns[fromStr].x, CONFIG.towns[fromStr].z),
+                        p2: getCanvasPos(CONFIG.towns[toStr].x, CONFIG.towns[toStr].z),
+                        transport: CONFIG.transports[conn.type],
+                        isHigh: isEdgeInHighlight(fromStr, toStr, conn.type),
+                        total: pairCounts[key],
+                        index: index,
+                    });
+                });
+
+                if (currentHighlightIndex >= 0 && globalPaths[currentHighlightIndex]) {
+                    let curr = globalPaths[currentHighlightIndex].startId;
+                    globalPaths[currentHighlightIndex].path.forEach(step => {
+                        if (step.isAuto) {
+                            linesToDraw.push({
+                                p1: getCanvasPos(CONFIG.towns[curr].x, CONFIG.towns[curr].z),
+                                p2: getCanvasPos(CONFIG.towns[step.to].x, CONFIG.towns[step.to].z),
+                                transport: CONFIG.transports[step.type],
+                                isHigh: true,
+                                total: 1,
+                                index: 0,
+                            });
+                        }
+                        curr = step.to;
+                    });
+                }
+
+                linesToDraw.sort((a, b) => (a.isHigh === b.isHigh ? 0 : a.isHigh ? 1 : -1));
+
+                linesToDraw.forEach(line => {
+                    ctx.beginPath();
+                    ctx.moveTo(line.p1.x, line.p1.y);
+
+                    if (line.total > 1) {
+                        const midX = (line.p1.x + line.p2.x) / 2;
+                        const midY = (line.p1.y + line.p2.y) / 2;
+                        const angle = Math.atan2(line.p2.y - line.p1.y, line.p2.x - line.p1.x);
+                        const offset = (line.index % 2 === 0 ? 1 : -1) * (Math.floor(line.index / 2) + 1) * 20;
+                        const cpX = midX + Math.cos(angle + Math.PI / 2) * offset;
+                        const cpY = midY + Math.sin(angle + Math.PI / 2) * offset;
+                        ctx.quadraticCurveTo(cpX, cpY, line.p2.x, line.p2.y);
+                    } else {
+                        ctx.lineTo(line.p2.x, line.p2.y);
+                    }
+
+                    const isAnyHighlighted = currentHighlightIndex >= 0;
+                    if (isAnyHighlighted) {
+                        if (line.isHigh) {
+                            ctx.strokeStyle = line.transport.color;
+                            ctx.globalAlpha = 1.0;
+                            ctx.lineWidth = 4;
+                            ctx.shadowBlur = 12;
+                            ctx.shadowColor = line.transport.color;
+                        } else {
+                            ctx.strokeStyle = '#475569';
+                            ctx.globalAlpha = 0.3;
+                            ctx.lineWidth = 2;
+                            ctx.shadowBlur = 0;
+                        }
+                    } else {
+                        ctx.strokeStyle = line.transport.color;
+                        ctx.globalAlpha = 0.9;
+                        ctx.lineWidth = 3;
+                        ctx.shadowBlur = 4;
+                        ctx.shadowColor = 'rgba(0,0,0,0.5)';
+                    }
+
+                    if (line.transport.dashed) ctx.setLineDash([8, 6]);
+                    else ctx.setLineDash([]);
+
+                    ctx.stroke();
+                });
+
+                ctx.globalAlpha = 1.0;
+                ctx.shadowBlur = 0;
+                ctx.setLineDash([]);
+
+                const planePath = new Path2D('M21,16v-2l-8-5V3.5C13,2.67,12.33,2,11.5,2S10,2.67,10,3.5V9l-8,5v2l8-2.5V19l-2,1.5V22l3.5-1l3.5,1v-1.5L13,19v-5.5L21,16z');
+
+                for (const id in CONFIG.towns) {
+                    const t = CONFIG.towns[id];
+                    const p = getCanvasPos(t.x, t.z);
+
+                    let isTownHigh = false;
+                    if (currentHighlightIndex >= 0 && globalPaths[currentHighlightIndex]) {
+                        const path = globalPaths[currentHighlightIndex];
+                        if (path.startId == id) isTownHigh = true;
+                        if (path.path.some(step => step.to == id)) isTownHigh = true;
+                    } else {
+                        isTownHigh = true;
+                    }
+
+                    ctx.globalAlpha = isTownHigh ? 1.0 : 0.4;
+
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, isTownHigh ? 7 : 5, 0, Math.PI * 2);
+                    ctx.fillStyle = isTownHigh ? '#ffffff' : '#94a3b8';
+                    ctx.fill();
+                    ctx.strokeStyle = '#0f172a';
+                    ctx.lineWidth = 2;
+                    ctx.stroke();
+
+                    ctx.font = isTownHigh ? 'bold 14px "Noto Sans JP", sans-serif' : '13px "Noto Sans JP", sans-serif';
+                    const textWidth = ctx.measureText(t.name).width;
+                    const iconWidth = t.hasAirport ? 20 : 0;
+                    const totalWidth = textWidth + iconWidth;
+
+                    const startX = p.x - totalWidth / 2;
+                    const textY = p.y - 14;
+
+                    ctx.fillStyle = 'rgba(15, 23, 42, 0.7)';
+                    ctx.beginPath();
+                    ctx.roundRect(startX - 6, p.y - 30, totalWidth + 12, 22, 4);
+                    ctx.fill();
+
+                    ctx.fillStyle = isTownHigh ? '#ffffff' : '#cbd5e1';
+                    ctx.textAlign = 'left';
+                    ctx.fillText(t.name, startX, textY);
+
+                    if (t.hasAirport) {
+                        ctx.save();
+                        ctx.translate(startX + textWidth + 4, p.y - 27);
+                        ctx.scale(0.6, 0.6);
+                        ctx.fillStyle = isTownHigh ? '#38bdf8' : '#64748b';
+                        ctx.fill(planePath);
+                        ctx.restore();
+                    }
+                }
+
+                // マップ初回描画時、スマホ等の場合は中央へスクロール位置を調整する
+                if (isMobile && hasRoute) {
+                    // スマホで検索時：ルートの中央が画面の中心に来るようにピタッと合わせる
+                    container.scrollLeft = (canvas.width - container.clientWidth) / 2;
+                    container.scrollTop = (canvas.height - container.clientHeight) / 2;
+                } else if (!isInitialMapScrolled && container.scrollWidth > container.clientWidth) {
+                    // 初期表示時
+                    container.scrollLeft = (container.scrollWidth - container.clientWidth) / 2;
+                    if (container.scrollHeight > container.clientHeight) {
+                        container.scrollTop = (container.scrollHeight - container.clientHeight) / 2;
+                    }
+                    isInitialMapScrolled = true;
+                }
+            }
+        </script>
+    </body>
+</html>
