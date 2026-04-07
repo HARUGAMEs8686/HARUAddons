@@ -752,6 +752,7 @@
 
                 const pairCounts = {};
                 CONFIG.connections.forEach(conn => {
+                    if (conn.type === 'plane') return;
                     const key = [conn.from.toString(), conn.to.toString()].sort().join('-');
                     pairCounts[key] = (pairCounts[key] || 0) + 1;
                 });
@@ -779,7 +780,8 @@
                 if (currentHighlightIndex >= 0 && globalPaths[currentHighlightIndex]) {
                     let curr = globalPaths[currentHighlightIndex].startId;
                     globalPaths[currentHighlightIndex].path.forEach(step => {
-                        if (step.isAuto) {
+    
+                        if (step.isAuto && step.type !== 'plane') {
                             linesToDraw.push({
                                 p1: getCanvasPos(CONFIG.towns[curr].x, CONFIG.towns[curr].z),
                                 p2: getCanvasPos(CONFIG.towns[step.to].x, CONFIG.towns[step.to].z),
