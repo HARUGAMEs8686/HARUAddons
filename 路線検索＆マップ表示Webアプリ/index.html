@@ -305,12 +305,12 @@
                 margin: 0;
                 font-size: 18px;
                 min-width: unset;
-                box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
             }
             .map-btn:hover {
                 background: rgba(30, 41, 59, 0.95);
                 transform: translateY(-1px);
-                box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
             }
 
             /* 凡例 */
@@ -450,12 +450,12 @@
                 <div id="map-container">
                     <canvas id="world-map"></canvas>
                 </div>
-                
+
                 <!-- マップ操作用ボタン -->
                 <div class="map-controls">
                     <button class="map-btn" onclick="zoomIn()" title="拡大">＋</button>
                     <button class="map-btn" onclick="zoomOut()" title="縮小">－</button>
-                    <button class="map-btn" onclick="focusCurrentState()" title="画面に収める" style="font-size: 20px;">⛶</button>
+                    <button class="map-btn" onclick="focusCurrentState()" title="画面に収める" style="font-size: 20px">⛶</button>
                 </div>
 
                 <!-- 凡例 -->
@@ -498,6 +498,7 @@
                     { from: 1, to: 6, type: 'plane', fare: 70 },
                     { from: 1, to: 2, type: 'nether', fare: 100 },
                     { from: 1, to: 3, type: 'rail', fare: 0 },
+                    { from: 4, to: 3, type: 'plane', fare: 160 },
                 ],
             };
 
@@ -507,7 +508,7 @@
 
             let globalPaths = [];
             let currentHighlightIndex = -1;
-            
+
             // マップの描画状態（パン・ズーム用）
             let transform = { x: 0, y: 0, scale: 1 };
             let animFrameId = null;
@@ -515,17 +516,17 @@
             window.onload = () => {
                 initSelectBoxes();
                 initLegend();
-                
+
                 const canvas = document.getElementById('world-map');
                 canvas.width = canvas.clientWidth;
                 canvas.height = canvas.clientHeight;
-                
+
                 initMapEvents();
                 focusCurrentState();
-                
+
                 // 画面リサイズ時にキャンバスサイズを合わせ、フォーカスし直す
                 window.addEventListener('resize', () => {
-                    if(canvas.width !== canvas.clientWidth || canvas.height !== canvas.clientHeight) {
+                    if (canvas.width !== canvas.clientWidth || canvas.height !== canvas.clientHeight) {
                         canvas.width = canvas.clientWidth;
                         canvas.height = canvas.clientHeight;
                         focusCurrentState();
@@ -725,7 +726,7 @@
                         el.style.transform = 'translateY(0)';
                     }
                 });
-                
+
                 focusCurrentState(); // ルートにフォーカスを当てる
             }
 
@@ -751,10 +752,12 @@
             // 指定された駅群が画面に収まるようにアニメーションでズーム・移動する
             function focusOnNodes(nodeIds) {
                 if (nodeIds.length === 0) return;
-                
-                let minX = Infinity, maxX = -Infinity;
-                let minZ = Infinity, maxZ = -Infinity;
-                
+
+                let minX = Infinity,
+                    maxX = -Infinity;
+                let minZ = Infinity,
+                    maxZ = -Infinity;
+
                 nodeIds.forEach(id => {
                     const t = CONFIG.towns[id];
                     if (t.x < minX) minX = t.x;
@@ -766,10 +769,10 @@
                 const canvas = document.getElementById('world-map');
                 const isMobile = window.innerWidth <= 768;
                 const padding = isMobile ? 50 : 100; // 端っこの余白
-                
+
                 let rangeX = maxX - minX;
                 let rangeZ = maxZ - minZ;
-                
+
                 // 単一の駅や非常に近い駅同士の場合の最小表示範囲
                 const minRange = 3000;
                 if (rangeX < minRange) {
@@ -784,52 +787,52 @@
                     maxZ = cz + minRange / 2;
                     rangeZ = minRange;
                 }
-                
+
                 const scaleX = (canvas.width - padding * 2) / rangeX;
                 const scaleZ = (canvas.height - padding * 2) / rangeZ;
-                
+
                 // ズーム制限 (0.01倍 〜 5倍)
                 let targetScale = Math.min(scaleX, scaleZ);
                 targetScale = Math.max(0.01, Math.min(5.0, targetScale));
-                
+
                 const centerX = (minX + maxX) / 2;
                 const centerZ = (minZ + maxZ) / 2;
-                
+
                 const targetX = canvas.width / 2 - centerX * targetScale;
                 const targetY = canvas.height / 2 - centerZ * targetScale;
-                
+
                 animateTransform(targetX, targetY, targetScale);
             }
 
             // スムーズな移動・ズームのアニメーション
             function animateTransform(tx, ty, tScale) {
                 if (animFrameId) cancelAnimationFrame(animFrameId);
-                
+
                 const startX = transform.x;
                 const startY = transform.y;
                 const startScale = transform.scale;
-                
+
                 const duration = 400; // 0.4秒
                 const startTime = performance.now();
-                
+
                 function step(now) {
                     let elapsed = now - startTime;
                     if (elapsed > duration) elapsed = duration;
-                    
+
                     const t = elapsed / duration;
                     const ease = 1 - Math.pow(1 - t, 3); // Ease-out cubic
-                    
+
                     transform.x = startX + (tx - startX) * ease;
                     transform.y = startY + (ty - startY) * ease;
                     transform.scale = startScale + (tScale - startScale) * ease;
-                    
+
                     drawMap();
-                    
+
                     if (elapsed < duration) {
                         animFrameId = requestAnimationFrame(step);
                     }
                 }
-                
+
                 animFrameId = requestAnimationFrame(step);
             }
 
@@ -837,7 +840,7 @@
             function setZoomSafely(newScale, mouseX, mouseY) {
                 const clampedScale = Math.max(0.01, Math.min(5.0, newScale));
                 const ratio = clampedScale / transform.scale;
-                
+
                 transform.x = mouseX - (mouseX - transform.x) * ratio;
                 transform.y = mouseY - (mouseY - transform.y) * ratio;
                 transform.scale = clampedScale;
@@ -848,11 +851,7 @@
                 const canvas = document.getElementById('world-map');
                 const targetScale = Math.min(5.0, transform.scale * 1.5);
                 const ratio = targetScale / transform.scale;
-                animateTransform(
-                    canvas.width / 2 - (canvas.width / 2 - transform.x) * ratio,
-                    canvas.height / 2 - (canvas.height / 2 - transform.y) * ratio,
-                    targetScale
-                );
+                animateTransform(canvas.width / 2 - (canvas.width / 2 - transform.x) * ratio, canvas.height / 2 - (canvas.height / 2 - transform.y) * ratio, targetScale);
             }
 
             // ボタン用 ズームアウト
@@ -860,11 +859,7 @@
                 const canvas = document.getElementById('world-map');
                 const targetScale = Math.max(0.01, transform.scale / 1.5);
                 const ratio = targetScale / transform.scale;
-                animateTransform(
-                    canvas.width / 2 - (canvas.width / 2 - transform.x) * ratio,
-                    canvas.height / 2 - (canvas.height / 2 - transform.y) * ratio,
-                    targetScale
-                );
+                animateTransform(canvas.width / 2 - (canvas.width / 2 - transform.x) * ratio, canvas.height / 2 - (canvas.height / 2 - transform.y) * ratio, targetScale);
             }
 
             // マウス・タッチイベントの登録
@@ -878,71 +873,77 @@
                 canvas.addEventListener('mousedown', e => {
                     isDragging = true;
                     startDragPos = { x: e.clientX - transform.x, y: e.clientY - transform.y };
-                    if(animFrameId) cancelAnimationFrame(animFrameId);
+                    if (animFrameId) cancelAnimationFrame(animFrameId);
                 });
-                
+
                 window.addEventListener('mousemove', e => {
                     if (!isDragging) return;
                     transform.x = e.clientX - startDragPos.x;
                     transform.y = e.clientY - startDragPos.y;
                     drawMap();
                 });
-                
-                window.addEventListener('mouseup', () => isDragging = false);
 
-                canvas.addEventListener('wheel', e => {
-                    e.preventDefault();
-                    if(animFrameId) cancelAnimationFrame(animFrameId);
-                    
-                    const zoomIntensity = 0.1;
-                    const wheel = e.deltaY < 0 ? 1 : -1;
-                    const zoomFactor = Math.exp(wheel * zoomIntensity);
-                    
-                    const rect = canvas.getBoundingClientRect();
-                    const mouseX = e.clientX - rect.left;
-                    const mouseY = e.clientY - rect.top;
-                    
-                    setZoomSafely(transform.scale * zoomFactor, mouseX, mouseY);
-                    drawMap();
-                }, { passive: false });
+                window.addEventListener('mouseup', () => (isDragging = false));
+
+                canvas.addEventListener(
+                    'wheel',
+                    e => {
+                        e.preventDefault();
+                        if (animFrameId) cancelAnimationFrame(animFrameId);
+
+                        const zoomIntensity = 0.1;
+                        const wheel = e.deltaY < 0 ? 1 : -1;
+                        const zoomFactor = Math.exp(wheel * zoomIntensity);
+
+                        const rect = canvas.getBoundingClientRect();
+                        const mouseX = e.clientX - rect.left;
+                        const mouseY = e.clientY - rect.top;
+
+                        setZoomSafely(transform.scale * zoomFactor, mouseX, mouseY);
+                        drawMap();
+                    },
+                    { passive: false },
+                );
 
                 // --- スマホ等のタッチ操作 ---
-                canvas.addEventListener('touchstart', e => {
-                    if(animFrameId) cancelAnimationFrame(animFrameId);
-                    if (e.touches.length === 1) {
-                        isDragging = true;
-                        startDragPos = { x: e.touches[0].clientX - transform.x, y: e.touches[0].clientY - transform.y };
-                    } else if (e.touches.length === 2) {
-                        isDragging = false;
-                        lastPinchDist = Math.hypot(
-                            e.touches[0].clientX - e.touches[1].clientX,
-                            e.touches[0].clientY - e.touches[1].clientY
-                        );
-                    }
-                }, { passive: false });
+                canvas.addEventListener(
+                    'touchstart',
+                    e => {
+                        if (animFrameId) cancelAnimationFrame(animFrameId);
+                        if (e.touches.length === 1) {
+                            isDragging = true;
+                            startDragPos = { x: e.touches[0].clientX - transform.x, y: e.touches[0].clientY - transform.y };
+                        } else if (e.touches.length === 2) {
+                            isDragging = false;
+                            lastPinchDist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
+                        }
+                    },
+                    { passive: false },
+                );
 
-                canvas.addEventListener('touchmove', e => {
-                    e.preventDefault(); // スクロールなどブラウザ標準の動きを止める
-                    if (e.touches.length === 1 && isDragging) {
-                        transform.x = e.touches[0].clientX - startDragPos.x;
-                        transform.y = e.touches[0].clientY - startDragPos.y;
-                        drawMap();
-                    } else if (e.touches.length === 2) {
-                        const dist = Math.hypot(
-                            e.touches[0].clientX - e.touches[1].clientX,
-                            e.touches[0].clientY - e.touches[1].clientY
-                        );
-                        const zoomFactor = dist / lastPinchDist;
-                        
-                        const rect = canvas.getBoundingClientRect();
-                        const centerX = (e.touches[0].clientX + e.touches[1].clientX) / 2 - rect.left;
-                        const centerY = (e.touches[0].clientY + e.touches[1].clientY) / 2 - rect.top;
+                canvas.addEventListener(
+                    'touchmove',
+                    e => {
+                        e.preventDefault(); // スクロールなどブラウザ標準の動きを止める
+                        if (e.touches.length === 1 && isDragging) {
+                            transform.x = e.touches[0].clientX - startDragPos.x;
+                            transform.y = e.touches[0].clientY - startDragPos.y;
+                            drawMap();
+                        } else if (e.touches.length === 2) {
+                            const dist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
+                            const zoomFactor = dist / lastPinchDist;
 
-                        setZoomSafely(transform.scale * zoomFactor, centerX, centerY);
-                        lastPinchDist = dist;
-                        drawMap();
-                    }
-                }, { passive: false });
+                            const rect = canvas.getBoundingClientRect();
+                            const centerX = (e.touches[0].clientX + e.touches[1].clientX) / 2 - rect.left;
+                            const centerY = (e.touches[0].clientY + e.touches[1].clientY) / 2 - rect.top;
+
+                            setZoomSafely(transform.scale * zoomFactor, centerX, centerY);
+                            lastPinchDist = dist;
+                            drawMap();
+                        }
+                    },
+                    { passive: false },
+                );
 
                 canvas.addEventListener('touchend', () => {
                     isDragging = false;
@@ -971,9 +972,9 @@
 
                 // マイクラ座標からキャンバス座標への変換（ズームと移動を適用）
                 function getCanvasPos(mcX, mcZ) {
-                    return { 
-                        x: mcX * transform.scale + transform.x, 
-                        y: mcZ * transform.scale + transform.y 
+                    return {
+                        x: mcX * transform.scale + transform.x,
+                        y: mcZ * transform.scale + transform.y,
                     };
                 }
 
