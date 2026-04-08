@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>Redirecting...</title>
+    <script>
+        window.location.href = "https://harugames8686.github.io/HARUAddons/%E8%B7%AF%E7%B7%9A%E6%A4%9C%E7%B4%A2%EF%BC%86%E3%83%9E%E3%83%83%E3%83%97%E8%A1%A8%E7%A4%BAWeb%E3%82%A2%E3%83%97%E3%83%AA/";
+    </script>
+</head>
+<body>
+    <p>リダイレクト中です。<a href="https://harugames8686.github.io/HARUAddons/%E8%B7%AF%E7%B7%9A%E6%A4%9C%E7%B4%A2%EF%BC%86%E3%83%9E%E3%83%83%E3%83%97%E8%A1%A8%E7%A4%BAWeb%E3%82%A2%E3%83%97%E3%83%AA/">ここをクリック</a>してください。</p>
+</body>
+</html>
