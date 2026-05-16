@@ -392,6 +392,32 @@
                     height: 55vh;
                     min-height: 380px;
                 }
+                .legend {
+                    bottom: 10px;
+                    left: 10px;
+                    padding: 6px 10px;
+                    max-width: 150px;
+                    pointer-events: auto; /* スマホでクリック可能にする */
+                    cursor: pointer;
+                }
+
+                /* 中身をデフォルトで非表示にする */
+                .legend-content {
+                    display: none;
+                    margin-top: 8px;
+                }
+
+                /* 「展開中」クラスがついたら中身を表示する */
+                .legend.expanded .legend-content {
+                    display: block;
+                }
+
+                /* タイトルに「▼」などのヒントを出す */
+                .legend-title::after {
+                    content: ' ⌵';
+                    font-size: 10px;
+                    opacity: 0.7;
+                }
             }
         </style>
     </head>
