@@ -1,0 +1,1161 @@
+<!doctype html>
+<html lang="ja">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>HARUServer - マップ</title>
+        <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet" />
+        <style>
+            :root {
+                --bg-base: #0f172a;
+                --bg-panel: #1e293b;
+                --bg-card: #334155;
+                --bg-card-hover: #475569;
+                --text-main: #f8fafc;
+                --text-muted: #94a3b8;
+                --border-color: #334155;
+                --accent-color: #10b981;
+                --accent-hover: #059669;
+                --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+                --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.3), 0 2px 4px -2px rgb(0 0 0 / 0.3);
+                --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.4), 0 4px 6px -4px rgb(0 0 0 / 0.4);
+            }
+
+            * {
+                box-sizing: border-box;
+            }
+
+            body {
+                font-family: 'Noto Sans JP', sans-serif;
+                background-color: var(--bg-base);
+                color: var(--text-main);
+                margin: 0;
+                padding: 24px;
+                display: flex;
+                flex-direction: column;
+                height: 100vh;
+            }
+
+            ::-webkit-scrollbar {
+                width: 8px;
+                height: 8px;
+            }
+            ::-webkit-scrollbar-track {
+                background: var(--bg-base);
+            }
+            ::-webkit-scrollbar-thumb {
+                background: var(--border-color);
+                border-radius: 4px;
+            }
+            ::-webkit-scrollbar-thumb:hover {
+                background: var(--text-muted);
+            }
+
+            h1 {
+                margin: 0 0 24px 0;
+                font-size: 26px;
+                font-weight: 700;
+                color: var(--text-main);
+                letter-spacing: 1px;
+                text-align: center;
+                text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+            }
+
+            .container {
+                display: flex;
+                gap: 24px;
+                flex: 1;
+                min-height: 0;
+            }
+
+            .left-panel,
+            .right-panel {
+                background-color: var(--bg-panel);
+                border-radius: 16px;
+                padding: 24px;
+                box-shadow: var(--shadow-lg);
+                display: flex;
+                flex-direction: column;
+                border: 1px solid rgba(255, 255, 255, 0.05);
+            }
+
+            .left-panel {
+                flex: 1.2;
+                min-width: 360px;
+                max-width: 450px;
+                overflow-y: auto;
+            }
+
+            .right-panel {
+                flex: 2;
+                position: relative;
+            }
+
+            .form-group {
+                margin-bottom: 20px;
+            }
+
+            .label-row {
+                display: flex;
+                justify-content: space-between;
+                align-items: flex-end;
+                margin-bottom: 8px;
+            }
+
+            label {
+                font-size: 13px;
+                font-weight: 700;
+                color: var(--text-muted);
+                letter-spacing: 0.5px;
+                margin: 0;
+            }
+
+            .checkbox-label {
+                display: flex;
+                align-items: center;
+                gap: 6px;
+                font-size: 12px;
+                color: var(--text-muted);
+                cursor: pointer;
+                font-weight: normal;
+                user-select: none;
+            }
+
+            .checkbox-label:hover {
+                color: var(--text-main);
+            }
+
+            input[type='checkbox'] {
+                accent-color: var(--accent-color);
+                width: 14px;
+                height: 14px;
+                margin: 0;
+                cursor: pointer;
+            }
+
+            select,
+            textarea {
+                width: 100%;
+                padding: 12px 16px;
+                border-radius: 8px;
+                border: 1px solid var(--border-color);
+                background-color: var(--bg-base);
+                color: var(--text-main);
+                font-size: 14px;
+                font-family: inherit;
+                transition: border-color 0.2s;
+            }
+
+            select {
+                appearance: none;
+                cursor: pointer;
+                background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+                background-repeat: no-repeat;
+                background-position: right 16px center;
+            }
+
+            select:focus,
+            textarea:focus {
+                outline: none;
+                border-color: var(--accent-color);
+            }
+
+            button {
+                width: 100%;
+                padding: 14px;
+                border-radius: 8px;
+                border: none;
+                background: linear-gradient(135deg, var(--accent-color), #059669);
+                color: white;
+                font-size: 16px;
+                font-weight: 700;
+                font-family: inherit;
+                cursor: pointer;
+                box-shadow: var(--shadow-md);
+                transition: all 0.2s ease;
+                letter-spacing: 1px;
+            }
+
+            button:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+            }
+
+            button:active {
+                transform: translateY(0);
+            }
+
+            #result-box {
+                margin-top: 24px;
+                display: flex;
+                flex-direction: column;
+                gap: 16px;
+            }
+
+            .route-card {
+                background-color: var(--bg-card);
+                border-radius: 12px;
+                padding: 20px;
+                cursor: pointer;
+                border: 1px solid transparent;
+                transition: all 0.3s ease;
+                position: relative;
+                overflow: hidden;
+            }
+
+            .route-card::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 4px;
+                height: 100%;
+                background-color: var(--border-color);
+                transition: background-color 0.3s;
+            }
+
+            .route-card:hover {
+                background-color: var(--bg-card-hover);
+                transform: translateY(-3px);
+                box-shadow: var(--shadow-md);
+            }
+
+            .route-card h3 {
+                margin: 0 0 12px 0;
+                font-size: 16px;
+                color: #fcd34d;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+            }
+
+            .route-summary {
+                font-size: 13px;
+                color: var(--text-muted);
+                margin-top: 4px;
+            }
+
+            .route-step-container {
+                margin-top: 12px;
+                font-size: 14px;
+            }
+
+            .route-node {
+                font-weight: 700;
+                position: relative;
+                padding-left: 20px;
+            }
+            .route-node::before {
+                content: '';
+                position: absolute;
+                left: 2px;
+                top: 6px;
+                width: 8px;
+                height: 8px;
+                background-color: var(--text-main);
+                border-radius: 50%;
+                z-index: 2;
+            }
+
+            .route-edge {
+                padding: 10px 0 10px 20px;
+                margin-left: 5px;
+                border-left: 2px solid var(--border-color);
+                color: var(--text-muted);
+                font-size: 13px;
+            }
+
+            #map-container {
+                flex: 1;
+                background-color: #0b1120;
+                border-radius: 12px;
+                position: relative;
+                overflow: hidden;
+                box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.5);
+                cursor: grab;
+                touch-action: none;
+                user-select: none;
+                -webkit-user-select: none;
+            }
+            #map-container:active {
+                cursor: grabbing;
+            }
+
+            canvas {
+                display: block;
+                width: 100%;
+                height: 100%;
+            }
+
+            .map-controls {
+                position: absolute;
+                top: 20px;
+                right: 20px;
+                display: flex;
+                flex-direction: column;
+                gap: 8px;
+                z-index: 10;
+            }
+            .map-btn {
+                background: rgba(15, 23, 42, 0.85);
+                backdrop-filter: blur(4px);
+                border: 1px solid rgba(255, 255, 255, 0.1);
+                color: var(--text-main);
+                width: 36px;
+                height: 36px;
+                border-radius: 8px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                cursor: pointer;
+                transition: all 0.2s;
+                padding: 0;
+                margin: 0;
+                font-size: 18px;
+                min-width: unset;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            }
+            .map-btn:hover {
+                background: rgba(30, 41, 59, 0.95);
+                transform: translateY(-1px);
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            }
+
+            .legend {
+                position: absolute;
+                bottom: 20px;
+                left: 20px;
+                background: rgba(15, 23, 42, 0.85);
+                backdrop-filter: blur(4px);
+                padding: 12px 16px;
+                border-radius: 8px;
+                font-size: 12px;
+                pointer-events: none;
+                border: 1px solid rgba(255, 255, 255, 0.1);
+                z-index: 10;
+            }
+            .legend-item {
+                display: flex;
+                align-items: center;
+                margin-bottom: 6px;
+                color: var(--text-main);
+            }
+            .legend-item:last-child {
+                margin-bottom: 0;
+            }
+            .legend-color {
+                width: 16px;
+                height: 4px;
+                margin-right: 10px;
+                border-radius: 2px;
+            }
+
+            @media (max-width: 1024px) {
+                body {
+                    padding: 16px;
+                    height: auto;
+                    min-height: 100vh;
+                }
+                .container {
+                    flex-direction: column;
+                    gap: 16px;
+                }
+                .left-panel,
+                .right-panel {
+                    padding: 20px;
+                    max-width: none;
+                    min-width: 0;
+                }
+                .left-panel {
+                    flex: none;
+                    overflow-y: visible;
+                }
+                .right-panel {
+                    flex: none;
+                    height: 60vh;
+                    min-height: 400px;
+                }
+            }
+            @media (max-width: 768px) {
+                body {
+                    padding: 12px;
+                }
+                h1 {
+                    font-size: 22px;
+                    margin-bottom: 16px;
+                }
+                .left-panel,
+                .right-panel {
+                    padding: 16px;
+                }
+                .right-panel {
+                    height: 55vh;
+                    min-height: 380px;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <h1>マイクラ交通網 路線検索</h1>
+
+        <div class="container">
+            <!-- 左側：検索パネル -->
+            <div class="left-panel">
+                <div class="form-group">
+                    <div class="label-row">
+                        <label for="start-location">出発地</label>
+                        <!-- ここですべての場所を表示するかトグル可能に -->
+                        <label class="checkbox-label" title="街や空港以外の場所（スポナーなど）も選択肢に含めます">
+                            <input type="checkbox" id="show-all-locations" onchange="initSelectBoxes()" />
+                            すべての場所を表示
+                        </label>
+                    </div>
+                    <select id="start-location"></select>
+                </div>
+
+                <div class="form-group">
+                    <div class="label-row">
+                        <label for="end-location">目的地</label>
+                    </div>
+                    <select id="end-location"></select>
+                </div>
+
+                <button onclick="searchRoute()">経路を検索する</button>
+
+                <div id="result-box">
+                    <div style="padding: 20px; background: var(--bg-card); border-radius: 8px; color: var(--text-muted); text-align: center; font-size: 14px">出発地と目的地を選んで検索してください。</div>
+                </div>
+            </div>
+
+            <!-- 右側：マップパネル -->
+            <div class="right-panel">
+                <div id="map-container">
+                    <canvas id="world-map"></canvas>
+                </div>
+
+                <!-- マップ操作用ボタン -->
+                <div class="map-controls">
+                    <button class="map-btn" onclick="zoomIn()" title="拡大">＋</button>
+                    <button class="map-btn" onclick="zoomOut()" title="縮小">－</button>
+                    <button class="map-btn" onclick="focusCurrentState()" title="画面に収める" style="font-size: 20px">⛶</button>
+                </div>
+
+                <!-- 凡例 -->
+                <div class="legend" id="map-legend"></div>
+            </div>
+        </div>
+
+        <script>
+            // ==========================================
+            // --- カスタマイズ設定エリア ---
+            // ==========================================
+
+            const CONFIG = {
+                autoWalk: true,
+                autoPlane: true,
+                autoHeli: true,
+
+                transports: {
+                    walk: { name: '徒歩', color: '#8B4513', speed: 100, dashed: true },
+                    rail: { name: '鉄道', color: '#94a3b8', speed: 480 },
+                    nether: { name: 'ネザー新幹線', color: '#ef4444', speed: 3840 },
+                    ice: { name: '氷新幹線', color: '#3b82f6', speed: 2400 },
+                    plane: { name: '飛行機', color: '#06b6d4', speed: 2400, baseFare: 400, farePerBlock: 0.16 },
+                    heli: { name: 'ヘリコプター', color: '#a855f7', speed: 1200, baseFare: 200, farePerBlock: 0.61 },
+                },
+
+                // towns から locations に変更し、街以外の場所も追加可能にしました。
+                // isTown: false とすることで「その他の場所」として描画されます。（指定なしは自動的に true）
+                locations: {
+                    1: { name: '始まりの街', x: 0, z: 0, hasAirport: true, isTown: true },
+                    2: { name: 'スカインフェルノ', x: -2336, z: 1792, hasAirport: true, isTown: true },
+                    3: { name: 'HARUCity', x: 6334, z: -892, hasAirport: true, isTown: true },
+                    4: { name: '神楽', x: 850, z: -60, hasAirport: false, isTown: true },
+                    5: { name: 'MIDTOWN', x: 442, z: 4922, hasAirport: false, isTown: true },
+                    6: { name: '神社', x: -1100, z: -1300, hasAirport: true, isTown: true },
+                    7: { name: 'メサ&砂漠空港', x: 5939, z: -2135, hasAirport: true, isTown: false },
+                    8: { name: 'メサ&サンゴ礁', x: -7849, z: -4953, hasAirport: false, isTown: false },
+                    9: { name: '前哨基地', x: 470, z: 1480, hasAirport: false, isTown: false },
+                    10: { name: '旅路の遺跡', x: -690, z: -1820, hasAirport: false, isTown: false },
+                    10: { name: 'サンゴ礁', x: 3887, z: -2604, hasAirport: false, isTown: false },
+                },
+
+                connections: [{ from: 1, to: 4, type: 'rail', fare: 300 }],
+            };
+
+            // ==========================================
+            // --- システム・ロジック ---
+            // ==========================================
+
+            let globalPaths = [];
+            let currentHighlightIndex = -1;
+
+            let transform = { x: 0, y: 0, scale: 1 };
+            let animFrameId = null;
+
+            window.onload = () => {
+                initSelectBoxes();
+                initLegend();
+
+                const canvas = document.getElementById('world-map');
+                canvas.width = canvas.clientWidth;
+                canvas.height = canvas.clientHeight;
+
+                initMapEvents();
+                focusCurrentState();
+
+                window.addEventListener('resize', () => {
+                    if (canvas.width !== canvas.clientWidth || canvas.height !== canvas.clientHeight) {
+                        canvas.width = canvas.clientWidth;
+                        canvas.height = canvas.clientHeight;
+                        focusCurrentState();
+                    }
+                });
+            };
+
+            // 出発地・目的地のリストを生成する
+            function initSelectBoxes() {
+                const showAll = document.getElementById('show-all-locations').checked;
+                const startSelect = document.getElementById('start-location');
+                const endSelect = document.getElementById('end-location');
+
+                // 現在選択されている値を保持（再描画時に復元するため）
+                const currentStart = startSelect.value;
+                const currentEnd = endSelect.value;
+
+                startSelect.innerHTML = '';
+                endSelect.innerHTML = '';
+
+                for (const [id, loc] of Object.entries(CONFIG.locations)) {
+                    // 表示条件:
+                    // - "すべて表示"にチェックが入っているか
+                    // - 街であるか (isTown !== false)
+                    // - 空港があるか
+                    const isTown = loc.isTown !== false;
+                    if (showAll || isTown || loc.hasAirport) {
+                        // 空港がある場合は飛行機マークを付けると親切
+                        const prefix = loc.hasAirport ? '' : '';
+                        startSelect.add(new Option(prefix + loc.name, id));
+                        endSelect.add(new Option(prefix + loc.name, id));
+                    }
+                }
+
+                // 選択状態の復元
+                if (currentStart && Array.from(startSelect.options).some(o => o.value === currentStart)) {
+                    startSelect.value = currentStart;
+                }
+                if (currentEnd && Array.from(endSelect.options).some(o => o.value === currentEnd)) {
+                    endSelect.value = currentEnd;
+                } else if (endSelect.options.length > 1) {
+                    endSelect.selectedIndex = 1; // 適当に2番目を選択
+                }
+            }
+
+            function initLegend() {
+                const legendBox = document.getElementById('map-legend');
+                let html = '<div style="margin-bottom:8px; font-weight:bold; color:#fff;">ワールドマップ <span style="font-size:10px; font-weight:normal; color:var(--text-muted);">(ドラッグで移動・拡大可)</span></div>';
+
+                // 路線の色
+                for (const key in CONFIG.transports) {
+                    const t = CONFIG.transports[key];
+                    const lineStyle = t.dashed ? `border-top: 3px dashed ${t.color}; background: transparent; height:0; margin-top:2px;` : `background-color: ${t.color}`;
+                    html += `
+                        <div class="legend-item">
+                            <div class="legend-color" style="${lineStyle}"></div>
+                            ${t.name}
+                        </div>
+                    `;
+                }
+
+                // 拠点アイコンの区別
+                html += `
+                    <div style="margin-top: 10px; padding-top: 10px; border-top: 1px solid rgba(255, 255, 255, 0.1);">
+                        <div class="legend-item" style="margin-bottom: 6px;">
+                            <div style="width: 12px; height: 12px; border-radius: 50%; background-color: #ef4444; border: 2px solid #fff; margin-right: 10px;"></div>
+                            街
+                        </div>
+                        <div class="legend-item" style="margin-bottom: 0;">
+                            <div style="width: 10px; height: 10px; border-radius: 50%; background-color: #cbd5e1; border: 1.5px solid #0f172a; margin-right: 11px; margin-left: 1px;"></div>
+                            その他の場所 (スポナー等)
+                        </div>
+                    </div>
+                `;
+
+                legendBox.innerHTML = html;
+            }
+
+            // ==========================================
+            // --- 経路検索ロジック ---
+            // ==========================================
+            function buildGraph() {
+                const graph = {};
+                for (const id in CONFIG.locations) graph[id.toString()] = [];
+
+                CONFIG.connections.forEach(conn => {
+                    const fromStr = conn.from.toString();
+                    const toStr = conn.to.toString();
+                    if (!CONFIG.locations[fromStr] || !CONFIG.locations[toStr]) return;
+
+                    const l1 = CONFIG.locations[fromStr];
+                    const l2 = CONFIG.locations[toStr];
+                    let time = conn.time;
+                    if (time === undefined) {
+                        const dist = Math.sqrt(Math.pow(l1.x - l2.x, 2) + Math.pow(l1.z - l2.z, 2));
+                        time = Math.max(1, Math.ceil(dist / CONFIG.transports[conn.type].speed));
+                    }
+                    graph[fromStr].push({ to: toStr, type: conn.type, fare: conn.fare, time: time, isAuto: false });
+                    graph[toStr].push({ to: fromStr, type: conn.type, fare: conn.fare, time: time, isAuto: false });
+                });
+
+                const ids = Object.keys(CONFIG.locations);
+                for (let i = 0; i < ids.length; i++) {
+                    for (let j = i + 1; j < ids.length; j++) {
+                        const t1 = ids[i];
+                        const t2 = ids[j];
+                        const loc1 = CONFIG.locations[t1];
+                        const loc2 = CONFIG.locations[t2];
+                        const dist = Math.sqrt(Math.pow(loc1.x - loc2.x, 2) + Math.pow(loc1.z - loc2.z, 2));
+
+                        if (CONFIG.autoPlane && loc1.hasAirport && loc2.hasAirport) {
+                            const hasPlane = graph[t1].some(e => e.to === t2 && e.type === 'plane');
+                            if (!hasPlane) {
+                                const time = Math.max(1, Math.ceil(dist / CONFIG.transports.plane.speed));
+                                const fare = Math.floor(CONFIG.transports.plane.baseFare + dist * CONFIG.transports.plane.farePerBlock);
+                                graph[t1].push({ to: t2, type: 'plane', fare: fare, time: time, isAuto: true });
+                                graph[t2].push({ to: t1, type: 'plane', fare: fare, time: time, isAuto: true });
+                            }
+                        }
+                        if (CONFIG.autoHeli) {
+                            const hasHeli = graph[t1].some(e => e.to === t2 && e.type === 'heli');
+                            if (!hasHeli) {
+                                const time = Math.max(1, Math.ceil(dist / CONFIG.transports.heli.speed));
+                                // 運賃計算： 基本料 + (距離 × ブロック単価)
+                                const fare = Math.floor(CONFIG.transports.heli.baseFare + dist * CONFIG.transports.heli.farePerBlock);
+                                graph[t1].push({ to: t2, type: 'heli', fare: fare, time: time, isAuto: true });
+                                graph[t2].push({ to: t1, type: 'heli', fare: fare, time: time, isAuto: true });
+                            }
+                        }
+                        if (CONFIG.autoWalk) {
+                            const hasWalk = graph[t1].some(e => e.to === t2 && e.type === 'walk');
+                            if (!hasWalk) {
+                                const time = Math.max(1, Math.ceil(dist / CONFIG.transports.walk.speed));
+                                graph[t1].push({ to: t2, type: 'walk', fare: 0, time: time, isAuto: true });
+                                graph[t2].push({ to: t1, type: 'walk', fare: 0, time: time, isAuto: true });
+                            }
+                        }
+                    }
+                }
+                return graph;
+            }
+
+            function searchRoute() {
+                const startId = document.getElementById('start-location').value;
+                const endId = document.getElementById('end-location').value;
+                const resultBox = document.getElementById('result-box');
+
+                if (!startId || !endId) return;
+
+                if (startId === endId) {
+                    resultBox.innerHTML = `<div style="padding:15px; background:rgba(239,68,68,0.2); color:#fca5a5; border-radius:8px; border:1px solid #ef4444;">出発地と目的地が同じです。</div>`;
+                    return;
+                }
+
+                const graph = buildGraph();
+                globalPaths = [];
+                let bestScore = Infinity;
+
+                function dfs(currentLoc, currentPath, currentFare, currentTime, visited, lastType) {
+                    const penaltyPerTransfer = 150;
+
+                    // スコア計算（運賃 + 時間×200 + 乗り換え回数ペナルティ）
+                    const currentScore = currentFare + currentTime * 200 + currentPath.length * penaltyPerTransfer;
+
+                    // 目的地に到着
+                    if (currentLoc === endId) {
+                        if (currentScore < bestScore) bestScore = currentScore;
+                        globalPaths.push({
+                            startId: startId,
+                            path: [...currentPath],
+                            totalFare: currentFare,
+                            totalTime: currentTime,
+                            score: currentScore,
+                        });
+                        return;
+                    }
+
+                    // 効率が悪すぎるルートは打ち切り
+                    if (bestScore !== Infinity && currentScore > bestScore * 1.8) return;
+                    if (visited.size > 5) return;
+
+                    for (const edge of graph[currentLoc]) {
+                        if (!visited.has(edge.to)) {
+                            // 同じ種類の移動手段が連続する場合はスキップ（直行便があるため）
+                            if (lastType === 'walk' && edge.type === 'walk') continue;
+                            if (lastType === 'plane' && edge.type === 'plane') continue;
+                            if (lastType === 'heli' && edge.type === 'heli') continue;
+
+                            // ★乗り換えロス計算（前の乗り物と違う種類なら2分プラス）
+                            let transferDelay = lastType !== null && lastType !== edge.type ? 2 : 0;
+
+                            visited.add(edge.to);
+                            currentPath.push(edge);
+
+                            // 再帰呼び出し（時間にロスを足して渡す）
+                            dfs(edge.to, currentPath, currentFare + edge.fare, currentTime + edge.time + transferDelay, visited, edge.type);
+
+                            currentPath.pop();
+                            visited.delete(edge.to);
+                        }
+                    }
+                }
+
+                dfs(startId, [], 0, 0, new Set([startId]), null);
+
+                if (globalPaths.length === 0) {
+                    resultBox.innerHTML = `<div style="padding:15px; background:rgba(239,68,68,0.2); color:#fca5a5; border-radius:8px;">経路が見つかりませんでした。</div>`;
+                    return;
+                }
+
+                globalPaths.sort((a, b) => a.score - b.score);
+                const topScore = globalPaths[0].score;
+                globalPaths = globalPaths.filter(route => route.score <= topScore * 1.8);
+                globalPaths = globalPaths.slice(0, 3);
+
+                let html = `<div style="color:var(--text-muted); font-size:13px; margin-bottom:4px; text-align:center;">ヒント: ルートをクリックでマップにハイライト＆拡大</div>`;
+
+                globalPaths.forEach((route, index) => {
+                    const transfers = route.path.length - 1;
+                    const transferText = transfers === 0 ? '直通' : `乗り換え ${transfers}回`;
+
+                    let badgeText = index === 0 ? '[おすすめ] ルート' : `ルート候補 ${index + 1}`;
+                    let activeStyle = index === 0 ? 'border-left-color: var(--accent-color);' : '';
+
+                    html += `
+                    <div class="route-card" id="card-${index}" onclick="highlightRoute(${index})" style="${activeStyle}">
+                        <h3>${badgeText}</h3>
+                        <div class="route-summary">合計: ${route.totalFare}PAY / 約${route.totalTime}分 / ${transferText}</div>
+                        <div class="route-step-container">
+                            <div class="route-node">${CONFIG.locations[startId].name}</div>
+                    `;
+
+                    route.path.forEach(step => {
+                        const transport = CONFIG.transports[step.type];
+                        const verb = step.type === 'walk' ? '歩く' : 'に乗る';
+
+                        let autoMark = '';
+                        if (step.isAuto) {
+                            if (step.type === 'walk') autoMark = '<span style="font-size:11px; color:#ef4444; opacity:0.8;">(道なき道)</span>';
+                            if (step.type === 'plane') autoMark = '<span style="font-size:11px; color:#06b6d4; opacity:0.8;">(直行便)</span>';
+                            if (step.type === 'heli') autoMark = '<span style="font-size:11px; color:#06b6d4; opacity:0.8;">(ヘリ直送)</span>';
+                        }
+
+                        html += `
+                            <div class="route-edge">
+                                <span style="color: ${transport.color}; font-weight:700;">${transport.name}</span> ${verb} ${autoMark}<br>
+                                <span>${step.fare}PAY / 約${step.time}分</span>
+                            </div>
+                            <div class="route-node">${CONFIG.locations[step.to].name}</div>
+                        `;
+                    });
+                    html += `</div></div>`;
+                });
+
+                resultBox.innerHTML = html;
+                highlightRoute(0);
+            }
+
+            function highlightRoute(index) {
+                currentHighlightIndex = index;
+                document.querySelectorAll('.route-card').forEach((el, i) => {
+                    if (i === index) {
+                        el.style.borderLeftColor = 'var(--accent-color)';
+                        el.style.backgroundColor = 'var(--bg-card-hover)';
+                        el.style.transform = 'translateY(-2px)';
+                    } else {
+                        el.style.borderLeftColor = 'transparent';
+                        el.style.backgroundColor = 'var(--bg-card)';
+                        el.style.transform = 'translateY(0)';
+                    }
+                });
+                focusCurrentState();
+            }
+
+            // ==========================================
+            // --- マップ描画・Pan/Zoom関連 ---
+            // ==========================================
+            function focusCurrentState() {
+                const ids = new Set();
+                if (currentHighlightIndex >= 0 && globalPaths[currentHighlightIndex]) {
+                    const route = globalPaths[currentHighlightIndex];
+                    ids.add(route.startId);
+                    route.path.forEach(step => ids.add(step.to));
+                } else {
+                    Object.keys(CONFIG.locations).forEach(id => ids.add(id));
+                }
+                focusOnNodes(Array.from(ids));
+            }
+
+            function focusOnNodes(nodeIds) {
+                if (nodeIds.length === 0) return;
+                let minX = Infinity,
+                    maxX = -Infinity,
+                    minZ = Infinity,
+                    maxZ = -Infinity;
+                nodeIds.forEach(id => {
+                    const loc = CONFIG.locations[id];
+                    if (loc.x < minX) minX = loc.x;
+                    if (loc.x > maxX) maxX = loc.x;
+                    if (loc.z < minZ) minZ = loc.z;
+                    if (loc.z > maxZ) maxZ = loc.z;
+                });
+                focusOnBoundingBox(minX, maxX, minZ, maxZ);
+            }
+
+            function focusOnBoundingBox(minX, maxX, minZ, maxZ) {
+                const canvas = document.getElementById('world-map');
+                const isMobile = window.innerWidth <= 768;
+                const padding = isMobile ? 50 : 100;
+
+                let rangeX = maxX - minX;
+                let rangeZ = maxZ - minZ;
+
+                const minRange = 3000;
+                if (rangeX < minRange) {
+                    const cx = (minX + maxX) / 2;
+                    minX = cx - minRange / 2;
+                    maxX = cx + minRange / 2;
+                    rangeX = minRange;
+                }
+                if (rangeZ < minRange) {
+                    const cz = (minZ + maxZ) / 2;
+                    minZ = cz - minRange / 2;
+                    maxZ = cz + minRange / 2;
+                    rangeZ = minRange;
+                }
+
+                const scaleX = (canvas.width - padding * 2) / rangeX;
+                const scaleZ = (canvas.height - padding * 2) / rangeZ;
+
+                let targetScale = Math.min(scaleX, scaleZ);
+                targetScale = Math.max(0.01, Math.min(5.0, targetScale));
+
+                const centerX = (minX + maxX) / 2;
+                const centerZ = (minZ + maxZ) / 2;
+
+                const targetX = canvas.width / 2 - centerX * targetScale;
+                const targetY = canvas.height / 2 - centerZ * targetScale;
+
+                animateTransform(targetX, targetY, targetScale);
+            }
+
+            function animateTransform(tx, ty, tScale) {
+                if (animFrameId) cancelAnimationFrame(animFrameId);
+                const startX = transform.x,
+                    startY = transform.y,
+                    startScale = transform.scale;
+                const duration = 400;
+                const startTime = performance.now();
+
+                function step(now) {
+                    let elapsed = now - startTime;
+                    if (elapsed > duration) elapsed = duration;
+                    const t = elapsed / duration;
+                    const ease = 1 - Math.pow(1 - t, 3);
+                    transform.x = startX + (tx - startX) * ease;
+                    transform.y = startY + (ty - startY) * ease;
+                    transform.scale = startScale + (tScale - startScale) * ease;
+                    drawMap();
+                    if (elapsed < duration) animFrameId = requestAnimationFrame(step);
+                }
+                animFrameId = requestAnimationFrame(step);
+            }
+
+            function setZoomSafely(newScale, mouseX, mouseY) {
+                const clampedScale = Math.max(0.01, Math.min(5.0, newScale));
+                const ratio = clampedScale / transform.scale;
+                transform.x = mouseX - (mouseX - transform.x) * ratio;
+                transform.y = mouseY - (mouseY - transform.y) * ratio;
+                transform.scale = clampedScale;
+            }
+
+            function zoomIn() {
+                const canvas = document.getElementById('world-map');
+                const targetScale = Math.min(5.0, transform.scale * 1.5);
+                const ratio = targetScale / transform.scale;
+                animateTransform(canvas.width / 2 - (canvas.width / 2 - transform.x) * ratio, canvas.height / 2 - (canvas.height / 2 - transform.y) * ratio, targetScale);
+            }
+
+            function zoomOut() {
+                const canvas = document.getElementById('world-map');
+                const targetScale = Math.max(0.01, transform.scale / 1.5);
+                const ratio = targetScale / transform.scale;
+                animateTransform(canvas.width / 2 - (canvas.width / 2 - transform.x) * ratio, canvas.height / 2 - (canvas.height / 2 - transform.y) * ratio, targetScale);
+            }
+
+            function initMapEvents() {
+                const canvas = document.getElementById('world-map');
+                let isDragging = false;
+                let startDragPos = { x: 0, y: 0 };
+                let lastPinchDist = null;
+
+                canvas.addEventListener('mousedown', e => {
+                    isDragging = true;
+                    startDragPos = { x: e.clientX - transform.x, y: e.clientY - transform.y };
+                    if (animFrameId) cancelAnimationFrame(animFrameId);
+                });
+
+                window.addEventListener('mousemove', e => {
+                    if (!isDragging) return;
+                    transform.x = e.clientX - startDragPos.x;
+                    transform.y = e.clientY - startDragPos.y;
+                    drawMap();
+                });
+
+                window.addEventListener('mouseup', () => (isDragging = false));
+
+                canvas.addEventListener(
+                    'wheel',
+                    e => {
+                        e.preventDefault();
+                        if (animFrameId) cancelAnimationFrame(animFrameId);
+                        const zoomIntensity = 0.1;
+                        const wheel = e.deltaY < 0 ? 1 : -1;
+                        const zoomFactor = Math.exp(wheel * zoomIntensity);
+                        const rect = canvas.getBoundingClientRect();
+                        setZoomSafely(transform.scale * zoomFactor, e.clientX - rect.left, e.clientY - rect.top);
+                        drawMap();
+                    },
+                    { passive: false },
+                );
+
+                canvas.addEventListener(
+                    'touchstart',
+                    e => {
+                        if (animFrameId) cancelAnimationFrame(animFrameId);
+                        if (e.touches.length === 1) {
+                            isDragging = true;
+                            startDragPos = { x: e.touches[0].clientX - transform.x, y: e.touches[0].clientY - transform.y };
+                        } else if (e.touches.length === 2) {
+                            isDragging = false;
+                            lastPinchDist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
+                        }
+                    },
+                    { passive: false },
+                );
+
+                canvas.addEventListener(
+                    'touchmove',
+                    e => {
+                        e.preventDefault();
+                        if (e.touches.length === 1 && isDragging) {
+                            transform.x = e.touches[0].clientX - startDragPos.x;
+                            transform.y = e.touches[0].clientY - startDragPos.y;
+                            drawMap();
+                        } else if (e.touches.length === 2) {
+                            const dist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
+                            const zoomFactor = dist / lastPinchDist;
+                            const rect = canvas.getBoundingClientRect();
+                            const centerX = (e.touches[0].clientX + e.touches[1].clientX) / 2 - rect.left;
+                            const centerY = (e.touches[0].clientY + e.touches[1].clientY) / 2 - rect.top;
+                            setZoomSafely(transform.scale * zoomFactor, centerX, centerY);
+                            lastPinchDist = dist;
+                            drawMap();
+                        }
+                    },
+                    { passive: false },
+                );
+
+                canvas.addEventListener('touchend', () => {
+                    isDragging = false;
+                    lastPinchDist = null;
+                });
+            }
+
+            function isEdgeInHighlight(from, to, type) {
+                if (currentHighlightIndex < 0 || !globalPaths[currentHighlightIndex]) return false;
+                const route = globalPaths[currentHighlightIndex];
+                let curr = route.startId;
+                for (const step of route.path) {
+                    if (((curr == from && step.to == to) || (curr == to && step.to == from)) && step.type === type) return true;
+                    curr = step.to;
+                }
+                return false;
+            }
+
+            function drawMap() {
+                const canvas = document.getElementById('world-map');
+                const ctx = canvas.getContext('2d');
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                function getCanvasPos(mcX, mcZ) {
+                    return { x: mcX * transform.scale + transform.x, y: mcZ * transform.scale + transform.y };
+                }
+
+                // 1. 路線の描画
+                const pairCounts = {};
+                CONFIG.connections.forEach(conn => {
+                    const key = [conn.from.toString(), conn.to.toString()].sort().join('-');
+                    pairCounts[key] = (pairCounts[key] || 0) + 1;
+                });
+                const currentCounts = {};
+                const linesToDraw = [];
+
+                CONFIG.connections.forEach(conn => {
+                    const fromStr = conn.from.toString();
+                    const toStr = conn.to.toString();
+                    const isHigh = isEdgeInHighlight(fromStr, toStr, conn.type);
+                    if (conn.type === 'plane' && !isHigh) return;
+
+                    const key = [fromStr, toStr].sort().join('-');
+                    const index = currentCounts[key] || 0;
+                    currentCounts[key] = index + 1;
+
+                    linesToDraw.push({
+                        p1: getCanvasPos(CONFIG.locations[fromStr].x, CONFIG.locations[fromStr].z),
+                        p2: getCanvasPos(CONFIG.locations[toStr].x, CONFIG.locations[toStr].z),
+                        transport: CONFIG.transports[conn.type],
+                        isHigh: isHigh,
+                        total: pairCounts[key],
+                        index: index,
+                    });
+                });
+
+                if (currentHighlightIndex >= 0 && globalPaths[currentHighlightIndex]) {
+                    let curr = globalPaths[currentHighlightIndex].startId;
+                    globalPaths[currentHighlightIndex].path.forEach(step => {
+                        if (step.isAuto) {
+                            linesToDraw.push({
+                                p1: getCanvasPos(CONFIG.locations[curr].x, CONFIG.locations[curr].z),
+                                p2: getCanvasPos(CONFIG.locations[step.to].x, CONFIG.locations[step.to].z),
+                                transport: CONFIG.transports[step.type],
+                                isHigh: true,
+                                total: 1,
+                                index: 0,
+                            });
+                        }
+                        curr = step.to;
+                    });
+                }
+
+                linesToDraw.sort((a, b) => (a.isHigh === b.isHigh ? 0 : a.isHigh ? 1 : -1));
+                linesToDraw.forEach(line => {
+                    ctx.beginPath();
+                    ctx.moveTo(line.p1.x, line.p1.y);
+
+                    if (line.total > 1) {
+                        const midX = (line.p1.x + line.p2.x) / 2,
+                            midY = (line.p1.y + line.p2.y) / 2;
+                        const angle = Math.atan2(line.p2.y - line.p1.y, line.p2.x - line.p1.x);
+                        const offset = (line.index % 2 === 0 ? 1 : -1) * (Math.floor(line.index / 2) + 1) * 20;
+                        ctx.quadraticCurveTo(midX + Math.cos(angle + Math.PI / 2) * offset, midY + Math.sin(angle + Math.PI / 2) * offset, line.p2.x, line.p2.y);
+                    } else {
+                        ctx.lineTo(line.p2.x, line.p2.y);
+                    }
+
+                    if (currentHighlightIndex >= 0) {
+                        if (line.isHigh) {
+                            ctx.strokeStyle = line.transport.color;
+                            ctx.globalAlpha = 1.0;
+                            ctx.lineWidth = 4;
+                            ctx.shadowBlur = 12;
+                            ctx.shadowColor = line.transport.color;
+                        } else {
+                            ctx.strokeStyle = '#475569';
+                            ctx.globalAlpha = 0.3;
+                            ctx.lineWidth = 2;
+                            ctx.shadowBlur = 0;
+                        }
+                    } else {
+                        ctx.strokeStyle = line.transport.color;
+                        ctx.globalAlpha = 0.9;
+                        ctx.lineWidth = 3;
+                        ctx.shadowBlur = 4;
+                        ctx.shadowColor = 'rgba(0,0,0,0.5)';
+                    }
+                    if (line.transport.dashed) ctx.setLineDash([8, 6]);
+                    else ctx.setLineDash([]);
+                    ctx.stroke();
+                });
+
+                ctx.globalAlpha = 1.0;
+                ctx.shadowBlur = 0;
+                ctx.setLineDash([]);
+
+                // 2. 拠点の描画
+                const planePath = new Path2D('M21,16v-2l-8-5V3.5C13,2.67,12.33,2,11.5,2S10,2.67,10,3.5V9l-8,5v2l8-2.5V19l-2,1.5V22l3.5-1l3.5,1v-1.5L13,19v-5.5L21,16z');
+
+                for (const id in CONFIG.locations) {
+                    const loc = CONFIG.locations[id];
+                    const p = getCanvasPos(loc.x, loc.z);
+
+                    let isTownHigh = true;
+                    if (currentHighlightIndex >= 0 && globalPaths[currentHighlightIndex]) {
+                        const path = globalPaths[currentHighlightIndex];
+                        isTownHigh = path.startId == id || path.path.some(step => step.to == id);
+                    }
+
+                    // 街かどうかの判定（デフォルトは街扱い）
+                    const isTown = loc.isTown !== false;
+
+                    // サイズと色の決定
+                    const radius = isTownHigh ? (isTown ? 7 : 6) : isTown ? 5 : 4;
+                    let fillColor, strokeColor, strokeWidth;
+
+                    if (isTownHigh) {
+                        fillColor = isTown ? '#ef4444' : '#cbd5e1'; // 街は赤 / その他は薄グレー
+                        strokeColor = isTown ? '#ffffff' : '#0f172a'; // 街は白枠
+                        strokeWidth = 2;
+                    } else {
+                        fillColor = isTown ? '#7f1d1d' : '#475569'; // 暗い赤 / 暗いグレー
+                        strokeColor = '#0f172a';
+                        strokeWidth = 1.5;
+                    }
+
+                    ctx.globalAlpha = isTownHigh ? 1.0 : 0.6;
+
+                    // 拠点マーカー描画
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, radius, 0, Math.PI * 2);
+                    ctx.fillStyle = fillColor;
+                    ctx.fill();
+                    ctx.strokeStyle = strokeColor;
+                    ctx.lineWidth = strokeWidth;
+                    ctx.stroke();
+
+                    // 文字の描画設定（街以外は少し小さくする）
+                    const fontSize = isTownHigh ? (isTown ? 14 : 12) : isTown ? 13 : 11;
+                    const fontWeight = isTownHigh ? 'bold' : 'normal';
+                    ctx.font = `${fontWeight} ${fontSize}px "Noto Sans JP", sans-serif`;
+
+                    const textWidth = ctx.measureText(loc.name).width;
+                    const iconWidth = loc.hasAirport ? 20 : 0;
+                    const totalWidth = textWidth + iconWidth;
+
+                    const startX = p.x - totalWidth / 2;
+                    const textY = p.y - (isTown ? 14 : 12); // 丸のサイズに応じて文字の高さを微調整
+
+                    // 文字の背景
+                    ctx.fillStyle = 'rgba(15, 23, 42, 0.7)';
+                    ctx.beginPath();
+                    ctx.roundRect(startX - 6, textY - 16, totalWidth + 12, 22, 4);
+                    ctx.fill();
+
+                    // 文字の描画
+                    ctx.fillStyle = isTownHigh ? '#ffffff' : '#cbd5e1';
+                    ctx.textAlign = 'left';
+                    ctx.fillText(loc.name, startX, textY);
+
+                    // 飛行機アイコン
+                    if (loc.hasAirport) {
+                        ctx.save();
+                        ctx.translate(startX + textWidth + 4, textY - 13);
+                        ctx.scale(0.6, 0.6);
+                        ctx.fillStyle = isTownHigh ? '#38bdf8' : '#64748b';
+                        ctx.fill(planePath);
+                        ctx.restore();
+                    }
+                }
+            }
+        </script>
+    </body>
+</html>
