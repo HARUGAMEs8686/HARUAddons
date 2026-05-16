@@ -386,19 +386,33 @@
                 }
                 .left-panel,
                 .right-panel {
-                    padding: 16px;
+                    height: auto; /* 高さを固定せず中身に合わせる */
+                    min-height: 500px;
+                    padding-bottom: 10px;
+                }
+
+                #map-container {
+                    height: 450px; /* マップ自体の高さは確保 */
+                    flex: none;
+                }
+
+                .legend {
+                    /* マップの「外」に出すための設定 */
+                    position: relative;
+                    top: 0;
+                    left: 0;
+                    bottom: 0;
+                    margin-top: 16px; /* マップとの隙間 */
+                    background: var(--bg-card); /* 透けない背景色 */
+                    border: 1px solid var(--border-color);
+                    pointer-events: auto;
+                    max-width: none;
+                    width: 100%;
+                    backdrop-filter: none;
                 }
                 .right-panel {
                     height: 55vh;
                     min-height: 380px;
-                }
-                .legend {
-                    bottom: 10px;
-                    left: 10px;
-                    padding: 6px 10px;
-                    max-width: 150px;
-                    pointer-events: auto; /* スマホでクリック可能にする */
-                    cursor: pointer;
                 }
 
                 /* 中身をデフォルトで非表示にする */
@@ -524,20 +538,38 @@
                 initLegend();
 
                 const canvas = document.getElementById('world-map');
-                canvas.width = canvas.clientWidth;
-                canvas.height = canvas.clientHeight;
 
+                resizeCanvas();
                 initMapEvents();
-                focusCurrentState();
+                setTimeout(() => {
+                    focusCurrentState();
+                }, 10);
 
                 window.addEventListener('resize', () => {
-                    if (canvas.width !== canvas.clientWidth || canvas.height !== canvas.clientHeight) {
-                        canvas.width = canvas.clientWidth;
-                        canvas.height = canvas.clientHeight;
-                        focusCurrentState();
-                    }
+                    resizeCanvas();
+                    focusCurrentState();
                 });
             };
+
+            // --- 高解像度対応のリサイズ関数を追加 ---
+            function resizeCanvas() {
+                const canvas = document.getElementById('world-map');
+                const dpr = window.devicePixelRatio || 1;
+                const rect = canvas.parentElement.getBoundingClientRect();
+
+                canvas.style.width = rect.width + 'px';
+                canvas.style.height = rect.height + 'px';
+
+                canvas.width = rect.width * dpr;
+                canvas.height = rect.height * dpr;
+
+                const ctx = canvas.getContext('2d');
+                // 一旦リセットしてからスケールをかける
+                ctx.setTransform(1, 0, 0, 1, 0, 0);
+                ctx.scale(dpr, dpr);
+
+                drawMap();
+            }
 
             // 出発地・目的地のリストを生成する
             function initSelectBoxes() {
@@ -842,6 +874,9 @@
                 const isMobile = window.innerWidth <= 768;
                 const padding = isMobile ? 50 : 100;
 
+                const logicalWidth = canvas.clientWidth;
+                const logicalHeight = canvas.clientHeight;
+
                 let rangeX = maxX - minX;
                 let rangeZ = maxZ - minZ;
 
@@ -859,8 +894,9 @@
                     rangeZ = minRange;
                 }
 
-                const scaleX = (canvas.width - padding * 2) / rangeX;
-                const scaleZ = (canvas.height - padding * 2) / rangeZ;
+                // ★修正: ここも logicalWidth/Height を使う
+                const scaleX = (logicalWidth - padding * 2) / rangeX;
+                const scaleZ = (logicalHeight - padding * 2) / rangeZ;
 
                 let targetScale = Math.min(scaleX, scaleZ);
                 targetScale = Math.max(0.01, Math.min(5.0, targetScale));
@@ -868,8 +904,9 @@
                 const centerX = (minX + maxX) / 2;
                 const centerZ = (minZ + maxZ) / 2;
 
-                const targetX = canvas.width / 2 - centerX * targetScale;
-                const targetY = canvas.height / 2 - centerZ * targetScale;
+                // ★修正: ここも logicalWidth/Height を使う
+                const targetX = logicalWidth / 2 - centerX * targetScale;
+                const targetY = logicalHeight / 2 - centerZ * targetScale;
 
                 animateTransform(targetX, targetY, targetScale);
             }
@@ -1011,7 +1048,12 @@
             function drawMap() {
                 const canvas = document.getElementById('world-map');
                 const ctx = canvas.getContext('2d');
+
+                // スケールがかかっていても全体を消せるように工夫
+                ctx.save();
+                ctx.setTransform(1, 0, 0, 1, 0, 0);
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.restore();
 
                 function getCanvasPos(mcX, mcZ) {
                     return { x: mcX * transform.scale + transform.x, y: mcZ * transform.scale + transform.y };
