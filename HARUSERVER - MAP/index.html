@@ -657,12 +657,12 @@
                     const l1 = CONFIG.locations[fromStr];
                     const l2 = CONFIG.locations[toStr];
                     let time = conn.time;
+                    const dist = Math.sqrt(Math.pow(l1.x - l2.x, 2) + Math.pow(l1.z - l2.z, 2)); // ★常に距離を算出するよう変更
                     if (time === undefined) {
-                        const dist = Math.sqrt(Math.pow(l1.x - l2.x, 2) + Math.pow(l1.z - l2.z, 2));
                         time = Math.max(1, Math.ceil(dist / CONFIG.transports[conn.type].speed));
                     }
-                    graph[fromStr].push({ to: toStr, type: conn.type, fare: conn.fare, time: time, isAuto: false });
-                    graph[toStr].push({ to: fromStr, type: conn.type, fare: conn.fare, time: time, isAuto: false });
+                    graph[fromStr].push({ to: toStr, type: conn.type, fare: conn.fare, time: time, isAuto: false, distance: dist }); // ★distanceを追加
+                    graph[toStr].push({ to: fromStr, type: conn.type, fare: conn.fare, time: time, isAuto: false, distance: dist }); // ★distanceを追加
                 });
 
                 const ids = Object.keys(CONFIG.locations);
@@ -679,26 +679,25 @@
                             if (!hasPlane) {
                                 const time = Math.max(1, Math.ceil(dist / CONFIG.transports.plane.speed));
                                 const fare = Math.floor(CONFIG.transports.plane.baseFare + dist * CONFIG.transports.plane.farePerBlock);
-                                graph[t1].push({ to: t2, type: 'plane', fare: fare, time: time, isAuto: true });
-                                graph[t2].push({ to: t1, type: 'plane', fare: fare, time: time, isAuto: true });
+                                graph[t1].push({ to: t2, type: 'plane', fare: fare, time: time, isAuto: true, distance: dist }); // ★distanceを追加
+                                graph[t2].push({ to: t1, type: 'plane', fare: fare, time: time, isAuto: true, distance: dist }); // ★distanceを追加
                             }
                         }
                         if (CONFIG.autoHeli) {
                             const hasHeli = graph[t1].some(e => e.to === t2 && e.type === 'heli');
                             if (!hasHeli) {
                                 const time = Math.max(1, Math.ceil(dist / CONFIG.transports.heli.speed));
-                                // 運賃計算： 基本料 + (距離 × ブロック単価)
                                 const fare = Math.floor(CONFIG.transports.heli.baseFare + dist * CONFIG.transports.heli.farePerBlock);
-                                graph[t1].push({ to: t2, type: 'heli', fare: fare, time: time, isAuto: true });
-                                graph[t2].push({ to: t1, type: 'heli', fare: fare, time: time, isAuto: true });
+                                graph[t1].push({ to: t2, type: 'heli', fare: fare, time: time, isAuto: true, distance: dist }); // ★distanceを追加
+                                graph[t2].push({ to: t1, type: 'heli', fare: fare, time: time, isAuto: true, distance: dist }); // ★distanceを追加
                             }
                         }
                         if (CONFIG.autoWalk) {
                             const hasWalk = graph[t1].some(e => e.to === t2 && e.type === 'walk');
                             if (!hasWalk) {
                                 const time = Math.max(1, Math.ceil(dist / CONFIG.transports.walk.speed));
-                                graph[t1].push({ to: t2, type: 'walk', fare: 0, time: time, isAuto: true });
-                                graph[t2].push({ to: t1, type: 'walk', fare: 0, time: time, isAuto: true });
+                                graph[t1].push({ to: t2, type: 'walk', fare: 0, time: time, isAuto: true, distance: dist }); // ★distanceを追加
+                                graph[t2].push({ to: t1, type: 'walk', fare: 0, time: time, isAuto: true, distance: dist }); // ★distanceを追加
                             }
                         }
                     }
@@ -807,10 +806,12 @@
                             if (step.type === 'heli') autoMark = '<span style="font-size:11px; color:#06b6d4; opacity:0.8;">(ヘリ直送)</span>';
                         }
 
+                        const distText = step.distance ? ` / 距離 約${Math.round(step.distance)}ブロック` : '';
+
                         html += `
                             <div class="route-edge">
                                 <span style="color: ${transport.color}; font-weight:700;">${transport.name}</span> ${verb} ${autoMark}<br>
-                                <span>${step.fare}PAY / 約${step.time}分</span>
+                                <span>${step.fare}PAY / 約${step.time}分${distText}</span> <!-- ★distTextを追加 -->
                             </div>
                             <div class="route-node">${CONFIG.locations[step.to].name}</div>
                         `;
