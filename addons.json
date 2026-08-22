@@ -1,0 +1,237 @@
+[
+  {
+    "name": "HARUPhone1",
+    "image": "haruphone1.png",
+    "bp": {
+      "uuid": "fa4fbacb-fbb2-4123-b2d1-c3d834cd30c9",
+      "remoteVersion": [2, 9, 1]
+    },
+    "rp": {
+      "uuid": "87612ea1-9f24-4f47-a14d-7bdc966c37c3",
+      "remoteVersion": [2, 9, 1]
+    },
+    "downloadUrl": "https://harugames8686.github.io/HARUAddonsPages/addonfile/HARUPhone1_v.2.9.1.zip"
+  },
+  {
+    "name": "Job Level Up",
+    "image": "JobSystem.png",
+    "bp": {
+      "uuid": "bf0942ed-2867-4522-b5ad-e59f2b84d105",
+      "remoteVersion": [1, 10, 7]
+    },
+    "downloadUrl": "https://harugames8686.github.io/HARUAddonsPages/addonfile/Job_v.1.10.7.zip"
+  },
+  {
+    "name": "SecurityCraft",
+    "image": "SecurityCraft.png",
+    "bp": {
+      "uuid": "0c1821f4-93fe-4058-a127-9312c9d97098",
+      "remoteVersion": [3, 12, 1]
+    },
+    "downloadUrl": "https://harugames8686.github.io/HARUAddonsPages/addonfile/SecurityCraft_v3.12.1.zip"
+  },
+  {
+    "name": "RankAdventure",
+    "image": "RankAdventure.png",
+    "bp": {
+      "uuid": "8321c0a4-29eb-4351-b9ee-9197f95b0588",
+      "remoteVersion": [1, 4, 0]
+    },
+    "rp": {
+      "uuid": "b38b860e-aeda-474d-a702-598281b22aa0",
+      "remoteVersion": [1, 4, 0]
+    },
+    "downloadUrl": "https://harugames8686.github.io/HARUAddonsPages/addonfile/RankAdventure_v.1.4.0.zip"
+  },
+  {
+    "name": "Storage",
+    "image": "Storage.png",
+    "bp": {
+      "uuid": "82776043-2678-4fa1-a38e-028b348a4b5f",
+      "remoteVersion": [1, 1, 1]
+    },
+    "rp": {
+      "uuid": "189717cf-4c5b-4127-bd1f-47757dfddb32",
+      "remoteVersion": [1, 1, 1]
+    },
+    "downloadUrl": "https://harugames8686.github.io/HARUAddonsPages/addonfile/Storage_v.1.1.1.zip"
+  },
+  {
+    "name": "Rail",
+    "image": "Rail.png",
+    "bp": {
+      "uuid": "d9b73aa3-522d-40e0-afee-486fd246a124",
+      "remoteVersion": [1, 1, 1]
+    },
+    "rp": {
+      "uuid": "6c23ec97-1386-47c2-8f4c-b3879fb4dc3d",
+      "remoteVersion": [1, 1, 1]
+    },
+    "downloadUrl": "https://harugames8686.github.io/HARUAddonsPages/addonfile/Rail_v.1.1.1.zip"
+  },
+  {
+    "name": "Chest Lock",
+    "image": "ChestLock.png",
+    "bp": {
+      "uuid": "ee74cb7f-39b1-4c97-bd02-a8b3351af1a9",
+      "remoteVersion": [1, 8, 4]
+    },
+    "downloadUrl": "https://harugames8686.github.io/HARUAddonsPages/addonfile/ChestLock_v.1.8.4.zip"
+  },
+  {
+    "name": "QuickDimension",
+    "image": "QuickDimension.png",
+    "bp": {
+      "uuid": "5b71036a-c850-43ce-bff5-526b047898ea",
+      "remoteVersion": [1, 0, 1]
+    },
+    "downloadUrl": "https://harugames8686.github.io/HARUAddonsPages/addonfile/QuickDimension_v.1.0.1.zip"
+  },
+  {
+    "name": "Camera",
+    "image": "Camera.png",
+    "bp": {
+      "uuid": "a696c227-b6c8-4bd2-9270-726d23d18e53",
+      "remoteVersion": [1, 2, 0]
+    },
+    "rp": {
+      "uuid": "8e7494a8-d8a7-42b4-ab5f-51ab3e9736f7",
+      "remoteVersion": [1, 2, 0]
+    },
+    "downloadUrl": "https://harugames8686.github.io/HARUAddonsPages/addonfile/Camera_v.1.2.0.zip"
+  },
+  {
+    "name": "Whitelist",
+    "image": "WhiteList.png",
+    "bp": {
+      "uuid": "36033cb2-a103-442f-9e2c-27462ddd8677",
+      "remoteVersion": [1, 3, 0]
+    },
+    "downloadUrl": "https://harugames8686.github.io/HARUAddonsPages/addonfile/WhiteList_v.1.3.0.zip"
+  },
+  {
+    "name": "Teams",
+    "image": "Teams.png",
+    "bp": {
+      "uuid": "0b3c71c5-cae8-4648-8460-cb7b99e7c6a1",
+      "remoteVersion": [1, 0, 1]
+    },
+    "downloadUrl": "https://harugames8686.github.io/HARUAddonsPages/addonfile/Teams_v.1.0.1.zip"
+  },
+  {
+    "name": "Sphere",
+    "image": "Sphere.png",
+    "bp": {
+      "uuid": "12815af6-50b0-47ed-bd02-1567455c9c17",
+      "remoteVersion": [1, 2, 0]
+    },
+    "downloadUrl": "https://harugames8686.github.io/HARUAddonsPages/addonfile/Sphere_v.1.2.0.zip"
+  },
+  {
+    "name": "WorldBorder",
+    "image": "WorldBorder.png",
+    "bp": {
+      "uuid": "a17e1da3-dac7-4684-ac3f-3960b346de60",
+      "remoteVersion": [1, 0, 5]
+    },
+    "downloadUrl": "https://harugames8686.github.io/HARUAddonsPages/addonfile/WorldBorder_v.1.0.5.zip"
+  },
+  {
+    "name": "LandProtection",
+    "image": "LandProtection.png",
+    "bp": {
+      "uuid": "8613b3e8-417c-4e9d-b81e-b669e8f00a7a",
+      "remoteVersion": [1, 0, 0]
+    },
+    "downloadUrl": "https://harugames8686.github.io/HARUAddonsPages/addonfile/LandProtection_v.1.0.0.zip"
+  },
+  {
+    "name": "Monitor",
+    "image": "Monitor.png",
+    "bp": {
+      "uuid": "3b0f6f43-7501-4c08-b9db-bcfee15b96ec",
+      "remoteVersion": [1, 0, 0]
+    },
+    "downloadUrl": "https://harugames8686.github.io/HARUAddonsPages/addonfile/Monitor_v.1.0.0.zip"
+  },
+  {
+    "name": "EventTagger",
+    "image": "EventTagger.png",
+    "bp": {
+      "uuid": "e4a06825-b28b-46c5-a6a3-ae2d34767744",
+      "remoteVersion": [1, 1, 2]
+    },
+    "downloadUrl": "https://harugames8686.github.io/HARUAddonsPages/addonfile/EventTagger_v.1.1.2.zip"
+  },
+  {
+    "name": "AutoItemKill",
+    "image": "AutoItemKill.png",
+    "bp": {
+      "uuid": "c21962b9-3de8-4646-832c-61161e984930",
+      "remoteVersion": [1, 1, 0]
+    },
+    "downloadUrl": "https://harugames8686.github.io/HARUAddonsPages/addonfile/AutoItemKill_v.1.1.0.zip"
+  },
+  {
+    "name": "ItemID",
+    "image": "ItemID.png",
+    "bp": {
+      "uuid": "d4155949-b925-484d-be48-6fb9add5a66c",
+      "remoteVersion": [1, 0, 2]
+    },
+    "downloadUrl": "https://harugames8686.github.io/HARUAddonsPages/addonfile/ItemID_v.1.0.2.zip"
+  },
+  {
+    "name": "Blacklist",
+    "image": "BlackList.png",
+    "bp": {
+      "uuid": "727f7816-d906-42e6-99cb-c03a8c0ae580",
+      "remoteVersion": [1, 0, 0]
+    },
+    "downloadUrl": "https://harugames8686.github.io/HARUAddonsPages/addonfile/BlackList_v.1.0.0.zip"
+  },
+  {
+    "name": "Mute",
+    "image": "Mute.png",
+    "bp": {
+      "uuid": "202f25ff-563b-44b4-a1ef-50db684ded66",
+      "remoteVersion": [1, 0, 0]
+    },
+    "downloadUrl": "https://harugames8686.github.io/HARUAddonsPages/addonfile/Mute_v.1.0.0.zip"
+  },
+  {
+    "name": "CommandShortCut",
+    "image": "CommandShortCut.jpg",
+    "bp": {
+      "uuid": "ff662cc2-68fc-4b43-8439-248759d6e2ad",
+      "remoteVersion": [1, 2, 0]
+    },
+    "rp": {
+      "uuid": "344923f3-3bae-44ac-b518-3ebceca02521",
+      "remoteVersion": [1, 2, 0]
+    },
+    "downloadUrl": "https://harugames8686.github.io/HARUAddonsPages/addonfile/CommandShortCut_v1.2.0.zip"
+  },
+  {
+    "name": "CommunicationPlus",
+    "image": "CommunicationPlus.png",
+    "bp": {
+      "uuid": "0c48764e-ab1b-4967-804d-66a795f2a790",
+      "remoteVersion": [1, 1, 0]
+    },
+    "rp": {
+      "uuid": "ab4a6809-ea75-4075-ae10-ed95179816b1",
+      "remoteVersion": [1, 1, 0]
+    },
+    "downloadUrl": "https://harugames8686.github.io/HARUAddonsPages/addonfile/ChatPlus_v.1.1.0.zip"
+  },
+  {
+    "name": "ServerTransfer",
+    "image": "ServerTransfer.png",
+    "bp": {
+      "uuid": "c7e4d79f-412a-4813-9a4f-9fa986b9e0e5",
+      "remoteVersion": [1, 4, 0]
+    },
+    "downloadUrl": "https://harugames8686.github.io/HARUAddonsPages/addonfile/ServerTransfer_v.1.4.0.zip"
+  }
+]
