@@ -141,9 +141,9 @@
     "image": "LandProtection.png",
     "bp": {
       "uuid": "8613b3e8-417c-4e9d-b81e-b669e8f00a7a",
-      "remoteVersion": [1, 0, 0]
+      "remoteVersion": [1, 1, 0]
     },
-    "downloadUrl": "https://harugames8686.github.io/HARUAddonsPages/addonfile/LandProtection_v.1.0.0.zip"
+    "downloadUrl": "https://harugames8686.github.io/HARUAddonsPages/addonfile/LandProtection_v.1.1.0.zip"
   },
   {
     "name": "Monitor",
